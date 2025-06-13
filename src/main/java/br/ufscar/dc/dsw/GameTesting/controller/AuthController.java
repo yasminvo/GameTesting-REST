@@ -28,10 +28,10 @@ public class AuthController {
     public JwtResponse login(@RequestBody LoginRequest request) {
         try {
             authManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(request.getName(), request.getPassword())
+                    new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
             );
 
-            final var userDetails = userDetailsService.loadUserByUsername(request.getName());
+            final var userDetails = userDetailsService.loadUserByUsername(request.getEmail());
             final String token = jwtUtil.generateToken(userDetails.getUsername());
 
             return new JwtResponse(token);

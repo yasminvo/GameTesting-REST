@@ -18,7 +18,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping
+    @GetMapping("/")
     public List<User> getAllUsers() {
         return userService.findAll();
     }
@@ -37,7 +37,7 @@ public class UserController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @PostMapping
+    @PostMapping("/")
     public ResponseEntity<User> createUser(@RequestBody User user) {
         User createdUser = userService.save(user);
         return ResponseEntity.ok(createdUser);

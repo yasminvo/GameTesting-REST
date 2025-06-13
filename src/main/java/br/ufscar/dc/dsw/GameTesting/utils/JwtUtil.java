@@ -12,7 +12,7 @@ public class JwtUtil {
 
     private final String SECRET_KEY = "O128DGR+r2ortqW7ZUskFGYwFTEVUuvFS4qznul+S94=";
 
-    private final long EXPIRATION_TIME = 1000; // 10 horas
+    private final long EXPIRATION_TIME = 1000000; // 10 horas
 
     public String generateToken(String username) {
         return Jwts.builder()
