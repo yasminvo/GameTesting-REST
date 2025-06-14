@@ -1,8 +1,10 @@
 package br.ufscar.dc.dsw.GameTesting.controller;
 
-import br.ufscar.dc.dsw.GameTesting.model.Projeto;
+import br.ufscar.dc.dsw.GameTesting.dtos.ProjetoDTO;
 import br.ufscar.dc.dsw.GameTesting.service.ProjetoService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -10,6 +12,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/projects")
+@PreAuthorize("hasRole('ADMIN')")
 public class ProjetoController {
 
     private final ProjetoService projetoService;
@@ -18,48 +21,42 @@ public class ProjetoController {
         this.projetoService = projetoService;
     }
 
-    @GetMapping("/")
-    public List<Projeto> getAllProjetos() {
-        return projetoService.findAll();
+    @GetMapping("")
+    public ResponseEntity<List<ProjetoDTO>> getAllProjetos(@RequestParam(defaultValue = "creationDate") String sort) {
+        List<ProjetoDTO> response = projetoService.listAllSorted(sort);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Projeto> getProjetoById(@PathVariable Long id) {
-        Optional<Projeto> projeto = projetoService.findById(id);
-        return projeto.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<ProjetoDTO> getProjetoById(@PathVariable Long id) {
+        Optional<ProjetoDTO> response = projetoService.getById(id);
+        if (response.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(response.get());
     }
 
-    @PostMapping("/")
-    public ResponseEntity<Projeto> createProjeto(@RequestBody Projeto projeto) {
-        Projeto createdProjeto = projetoService.save(projeto);
-        return ResponseEntity.ok(createdProjeto);
+    @PostMapping("")
+    public ResponseEntity<ProjetoDTO> createProjeto(@RequestBody ProjetoDTO projetoDTO) {
+        ProjetoDTO response = projetoService.createProjeto(projetoDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Projeto> updateProjeto(@PathVariable Long id, @RequestBody Projeto projetoDetails) {
-        Optional<Projeto> existingProjeto = projetoService.findById(id);
-        if (existingProjeto.isEmpty()) {
-            return ResponseEntity.notFound().build();
+    public ResponseEntity<ProjetoDTO> updateProjeto(@PathVariable Long id, @RequestBody ProjetoDTO projetoDTO) {
+        Optional<ProjetoDTO> response = projetoService.updateProjeto(id, projetoDTO);
+        if (response.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-
-        Projeto projeto = existingProjeto.get();
-        projeto.setName(projetoDetails.getName());
-        projeto.setDescription(projetoDetails.getDescription());
-        projeto.setCreationDate(projetoDetails.getCreationDate());
-        projeto.setMembers(projetoDetails.getMembers()); // cuidado com sobrescrita!
-
-        Projeto updatedProjeto = projetoService.save(projeto);
-        return ResponseEntity.ok(updatedProjeto);
+        return ResponseEntity.status(HttpStatus.OK).body(response.get());
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProjeto(@PathVariable Long id) {
-        Optional<Projeto> existingProjeto = projetoService.findById(id);
-        if (existingProjeto.isEmpty()) {
-            return ResponseEntity.notFound().build();
+        boolean deleted = projetoService.deleteProjeto(id);
+        if (!deleted) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-
-        projetoService.deleteById(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

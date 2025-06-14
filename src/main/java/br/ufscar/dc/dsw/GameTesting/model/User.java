@@ -1,6 +1,7 @@
 package br.ufscar.dc.dsw.GameTesting.model;
 
 import br.ufscar.dc.dsw.GameTesting.enums.Role;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import java.util.List;
 import java.util.ArrayList;
@@ -32,6 +33,7 @@ public class User {
 
     // Relacionamento ManyToMany com Projeto (membros)
     @ManyToMany(mappedBy = "members")
+    @JsonBackReference(value = "projeto-members")
     private List<Projeto> projects;
 
     public User() {

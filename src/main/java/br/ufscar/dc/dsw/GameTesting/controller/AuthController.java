@@ -1,7 +1,7 @@
 package br.ufscar.dc.dsw.GameTesting.controller;
 
-import br.ufscar.dc.dsw.GameTesting.dtos.LoginRequest;
-import br.ufscar.dc.dsw.GameTesting.dtos.JwtResponse;
+import br.ufscar.dc.dsw.GameTesting.dtos.LoginRequestDTO;
+import br.ufscar.dc.dsw.GameTesting.dtos.JwtResponseDTO;
 import br.ufscar.dc.dsw.GameTesting.utils.JwtUtil;
 import br.ufscar.dc.dsw.GameTesting.service.CustomUserDetailsService;
 
@@ -25,7 +25,7 @@ public class AuthController {
     private CustomUserDetailsService userDetailsService;
 
     @PostMapping("/login")
-    public JwtResponse login(@RequestBody LoginRequest request) {
+    public JwtResponseDTO login(@RequestBody LoginRequestDTO request) {
         try {
             authManager.authenticate(
                     new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
@@ -34,7 +34,7 @@ public class AuthController {
             final var userDetails = userDetailsService.loadUserByUsername(request.getEmail());
             final String token = jwtUtil.generateToken(userDetails.getUsername());
 
-            return new JwtResponse(token);
+            return new JwtResponseDTO(token);
         } catch (AuthenticationException e) {
             throw new RuntimeException("Usuário ou senha inválidos");
         }

@@ -1,5 +1,6 @@
 package br.ufscar.dc.dsw.GameTesting.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -29,6 +30,7 @@ public class Projeto {
             joinColumns = @JoinColumn(name = "projeto_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
+    @JsonManagedReference(value = "projeto-members")
     private List<User> members = new ArrayList<>();
 
 //    // Relacionamento OneToMany com Session (possui)
@@ -38,10 +40,11 @@ public class Projeto {
     public Projeto() {
     }
 
-    public Projeto(String name, String description, LocalDateTime creationDate) {
+    public Projeto(String name, String description, List<User> members) {
         this.name = name;
         this.description = description;
-        this.creationDate = creationDate;
+        this.creationDate = LocalDateTime.now();
+        this.members = members;
     }
 
     public Long getId() {
