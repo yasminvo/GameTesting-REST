@@ -12,7 +12,6 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/projects")
-@PreAuthorize("hasRole('ADMIN')")
 public class ProjetoController {
 
     private final ProjetoService projetoService;
@@ -36,12 +35,14 @@ public class ProjetoController {
         return ResponseEntity.status(HttpStatus.OK).body(response.get());
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("")
     public ResponseEntity<ProjetoDTO> createProjeto(@RequestBody ProjetoDTO projetoDTO) {
         ProjetoDTO response = projetoService.createProjeto(projetoDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<ProjetoDTO> updateProjeto(@PathVariable Long id, @RequestBody ProjetoDTO projetoDTO) {
         Optional<ProjetoDTO> response = projetoService.updateProjeto(id, projetoDTO);
@@ -51,6 +52,7 @@ public class ProjetoController {
         return ResponseEntity.status(HttpStatus.OK).body(response.get());
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProjeto(@PathVariable Long id) {
         boolean deleted = projetoService.deleteProjeto(id);

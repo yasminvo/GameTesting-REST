@@ -42,7 +42,13 @@ public class SecurityConfig {
                 .securityMatcher("/**")
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers(
+                                "/",
+                                "/auth/**",
+                                "/favicon.ico",
+                                "/app/**",
+                                "/utils/**").permitAll()
+
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
