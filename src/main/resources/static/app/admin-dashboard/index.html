@@ -16,7 +16,7 @@
     <ul>
         <li><a href="/app/cadastro-tester/index.html">Cadastrar Tester</a></li>
         <li><a href="/app/cadastro-admin/index.html">Cadastrar Admin</a></li>
-        <li><a href="#">Criar Projeto</a></li>
+        <li><a href="/app/cadastro-projeto/index.html">Criar Projeto</a></li>
         <li><a href="#">Cadastro de Estratégias</a></li>
         <li><a href="#">Cadastro Sessão de Teste</a></li>
     </ul>
@@ -24,6 +24,21 @@
 
 <main>
     <p>Bem-vindo ao painel administrativo.</p>
+
+    <section id="project-section">
+        <h2>Projetos</h2>
+
+        <label for="sort-select">Ordenar por:</label>
+        <select id="sort-select">
+            <option value="name">Nome (A-Z)</option>
+            <option value="name_desc">Nome (Z-A)</option>
+            <option value="creationDate">Data de Criação (mais antiga)</option>
+            <option value="creationDate_desc">Data de Criação (mais recente)</option>
+        </select>
+
+        <ul id="project-list"></ul>
+    </section>
+
 </main>
 
 <script type="module" src="dashboard.js"></script>

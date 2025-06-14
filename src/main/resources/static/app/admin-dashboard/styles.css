@@ -59,3 +59,25 @@ main {
   padding: 2rem;
   font-size: 1.2rem;
 }
+#project-section {
+  margin-top: 2rem;
+  padding: 1rem;
+  border-top: 1px solid #ccc;
+}
+
+#sort-select {
+  margin-left: 0.5rem;
+  padding: 0.25rem;
+}
+
+#project-list {
+  list-style: none;
+  padding: 0;
+}
+
+#project-list li {
+  margin-bottom: 1rem;
+  background: #f7f7f7;
+  padding: 1rem;
+  border-radius: 6px;
+}
