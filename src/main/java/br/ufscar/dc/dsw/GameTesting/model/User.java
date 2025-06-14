@@ -1,10 +1,9 @@
 package br.ufscar.dc.dsw.GameTesting.model;
 
 import br.ufscar.dc.dsw.GameTesting.enums.Role;
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.util.List;
-import java.util.ArrayList;
 
 @Entity
 @Table(name = "users")
@@ -14,7 +13,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true, length = 30)
+    @Column(nullable = false, length = 30)
     private String name;
 
     @Column(nullable = false, unique = true, length = 30)
@@ -33,7 +32,7 @@ public class User {
 
     // Relacionamento ManyToMany com Projeto (membros)
     @ManyToMany(mappedBy = "members")
-    @JsonBackReference(value = "projeto-members")
+    @JsonIgnore
     private List<Projeto> projects;
 
     public User() {

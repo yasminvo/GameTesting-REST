@@ -1,5 +1,6 @@
 package br.ufscar.dc.dsw.GameTesting.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
@@ -30,7 +31,7 @@ public class Projeto {
             joinColumns = @JoinColumn(name = "projeto_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
-    @JsonManagedReference(value = "projeto-members")
+    @JsonIgnore
     private List<User> members = new ArrayList<>();
 
 //    // Relacionamento OneToMany com Session (possui)

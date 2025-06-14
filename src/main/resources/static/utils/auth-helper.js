@@ -1,11 +1,7 @@
-// auth-helper.js
-
-// Função para obter o token do localStorage
 function getToken() {
   return localStorage.getItem('token');
 }
 
-// Função para decodificar um JWT e retornar o payload
 function parseJwt(token) {
   try {
     const base64Url = token.split('.')[1];
@@ -33,11 +29,9 @@ export function checkAuth(requiredRole = null) {
     return;
   }
 
-  // Token válido, você pode também exibir o nome do usuário, por exemplo
   console.log("Usuário autenticado:", payload.sub, "| Papel:", payload.role);
 }
 
-// Redireciona para a página de login
 function redirectToLogin() {
   window.location.href = '/public/login/index.html';
 }

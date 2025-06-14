@@ -4,6 +4,7 @@ import br.ufscar.dc.dsw.GameTesting.dtos.LoginRequestDTO;
 import br.ufscar.dc.dsw.GameTesting.dtos.JwtResponseDTO;
 import br.ufscar.dc.dsw.GameTesting.enums.Role;
 import br.ufscar.dc.dsw.GameTesting.model.User;
+import br.ufscar.dc.dsw.GameTesting.repository.UserRepository;
 import br.ufscar.dc.dsw.GameTesting.service.UserService;
 import br.ufscar.dc.dsw.GameTesting.utils.JwtUtil;
 import br.ufscar.dc.dsw.GameTesting.service.CustomUserDetailsService;
@@ -32,7 +33,7 @@ public class AuthController {
     private CustomUserDetailsService userDetailsService;
 
     @Autowired
-    private UserService userService;
+    private UserRepository userRepository;
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequestDTO request) {
@@ -42,7 +43,7 @@ public class AuthController {
             );
             final var userDetails = userDetailsService.loadUserByUsername(request.getEmail());
 
-            Optional<User> optionalUser = userService.findByEmail(request.getEmail());
+            Optional<User> optionalUser = userRepository.findByEmail(request.getEmail());
 
             if (optionalUser.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Usuário não encontrado.");
