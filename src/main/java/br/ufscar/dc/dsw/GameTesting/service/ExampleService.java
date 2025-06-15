@@ -5,6 +5,7 @@ import br.ufscar.dc.dsw.GameTesting.repository.ImageRepository;
 import br.ufscar.dc.dsw.GameTesting.repository.StrategyRepository; 
 import br.ufscar.dc.dsw.GameTesting.model.Image;
 import br.ufscar.dc.dsw.GameTesting.model.Strategy;
+import br.ufscar.dc.dsw.GameTesting.model.Example;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@Transactional /
+@Transactional 
 public class ExampleService {
 
     private final ExampleRepository exampleRepository;

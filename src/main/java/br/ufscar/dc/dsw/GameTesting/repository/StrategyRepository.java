@@ -12,5 +12,5 @@ public interface StrategyRepository extends JpaRepository<Strategy, Long> {
     Optional<Strategy> findByName(String name);
 
     // Encontrar estratégia por session
-    Optional<Strategy> findBySessionId(Long sessionId);
+   // Optional<Strategy> findBySessionId(Long sessionId);
 }
