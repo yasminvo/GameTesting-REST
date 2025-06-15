@@ -11,9 +11,9 @@ import java.util.List;
 public interface SessionRepository extends JpaRepository<Session, Long> {
 
     List<Session> findByTester(User tester);
-
     List<Session> findByProjeto(Projeto projeto);
-
     List<Session> findByStatus(Status status);
+    List<Session> findByProjetoId(Long projetoId);
 
+    List<Session> findByProjetoIdAndTester(Long projetoId, User tester);
 }

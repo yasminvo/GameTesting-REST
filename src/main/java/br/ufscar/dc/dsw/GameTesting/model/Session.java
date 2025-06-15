@@ -27,8 +27,8 @@ public class Session {
     @JoinColumn(name = "projeto", nullable = false)
     private Projeto projeto;
 
-    @Column(name = "duration_em_segundos")
-    private Long duration;
+    @Column(name = "duration_em_minutos")
+    private Integer duration;
 
     @Lob //para string grandes
     @Column(nullable = false)
@@ -38,7 +38,7 @@ public class Session {
     @Column(name = "status", nullable = false)
     private Status status;
 
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "session_status_history", joinColumns = @JoinColumn(name = "session"))
     @Column(name = "status_changed_at")
     private List<LocalDateTime> statusChangedTime = new ArrayList<>();
@@ -86,11 +86,11 @@ public class Session {
         this.projeto = projeto;
     }
 
-    public Long getDuration() {
+    public Integer getDuration() {
         return duration;
     }
 
-    public void setDuration(Long duration) {
+    public void setDuration(Integer duration) {
         this.duration = duration;
     }
 
