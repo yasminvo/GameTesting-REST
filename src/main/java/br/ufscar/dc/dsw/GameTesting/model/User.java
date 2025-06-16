@@ -26,7 +26,7 @@ public class User {
     @Column(nullable = false)
     private Role role;
 
-//    // Relacionamento OneToMany com Session (são criadas por)
+//    // Relacionamento OneToMany com    (são criadas por)
 //    @OneToMany(mappedBy = "tester", cascade = CascadeType.ALL, orphanRemoval = true)
 //    private List<Session> createdSessions;
 

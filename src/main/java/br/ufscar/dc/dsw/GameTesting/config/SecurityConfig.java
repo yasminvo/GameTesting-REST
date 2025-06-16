@@ -5,6 +5,7 @@ import br.ufscar.dc.dsw.GameTesting.service.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -49,6 +50,13 @@ public class SecurityConfig {
                                 "/app/**",
                                 "/utils/**").permitAll()
 
+                        //Yasmin, nas especificações fala que precisa ser ADMIN para POST/DELETE stategies ai mudei aqui     
+
+                        .requestMatchers(HttpMethod.POST, "/strategies").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/strategies/**").hasRole("ADMIN")
+                        
+                        
+                        //Demais estão iguais
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
