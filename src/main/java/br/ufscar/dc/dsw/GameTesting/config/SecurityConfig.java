@@ -50,13 +50,10 @@ public class SecurityConfig {
                                 "/app/**",
                                 "/utils/**").permitAll()
 
-                        //Yasmin, nas especificações fala que precisa ser ADMIN para POST/DELETE stategies ai mudei aqui     
 
                         .requestMatchers(HttpMethod.POST, "/strategies").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/strategies/**").hasRole("ADMIN")
-                        
-                        
-                        //Demais estão iguais
+
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session

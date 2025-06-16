@@ -19,9 +19,9 @@ public class Session {
     @JoinColumn(name = "tester", nullable = false)
     private User tester;
 
-    //@ManyToOne(fetch = FetchType.LAZY)
-    //@JoinColumn(name = "strategy", nullable = false)
-    //private Strategy strategy;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "strategy", nullable = false)
+    private Strategy strategy;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "projeto", nullable = false)
@@ -46,9 +46,9 @@ public class Session {
     public Session() {
     }
 
-    public Session(User tester,/* Strategy strategy,*/ Projeto projeto, String description, Status initialStatus) {
+    public Session(User tester, Strategy strategy, Projeto projeto, String description, Status initialStatus) {
         this.tester = tester;
-       // this.strategy = strategy;
+        this.strategy = strategy;
         this.projeto = projeto;
         this.description = description;
         this.status = initialStatus;
@@ -70,13 +70,13 @@ public class Session {
         this.tester = tester;
     }
 
-    //public Strategy getStrategy() {
-    //    return strategy;
-    //}
+    public Strategy getStrategy() {
+        return strategy;
+    }
 
-    //public void setStrategy(Strategy strategy) {
-    //    this.strategy = strategy;
-    //}
+    public void setStrategy(Strategy strategy) {
+        this.strategy = strategy;
+    }
 
     public Projeto getProjeto() {
         return projeto;

@@ -26,11 +26,9 @@ public class User {
     @Column(nullable = false)
     private Role role;
 
-//    // Relacionamento OneToMany com    (são criadas por)
-//    @OneToMany(mappedBy = "tester", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<Session> createdSessions;
+    @OneToMany(mappedBy = "tester", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Session> createdSessions;
 
-    // Relacionamento ManyToMany com Projeto (membros)
     @ManyToMany(mappedBy = "members")
     @JsonIgnore
     private List<Projeto> projects;
@@ -85,13 +83,13 @@ public class User {
         this.role = role;
     }
 
-//    public List<Session> getCreatedSessions() {
-//        return createdSessions;
-//    }
-//
-//    public void setCreatedSessions(List<Session> createdSessions) {
-//        this.createdSessions = createdSessions;
-//    }
+    public List<Session> getCreatedSessions() {
+        return createdSessions;
+    }
+
+    public void setCreatedSessions(List<Session> createdSessions) {
+        this.createdSessions = createdSessions;
+    }
 
     public List<Projeto> getProjects() {
         return projects;

@@ -18,6 +18,7 @@ public class ProjetoDTO {
     private String description;
     private LocalDateTime creationDate;
     private List<UserDTO> members;
+    private List<SessionResponseDTO> sessions;
 
     public static ProjetoDTO fromEntity(br.ufscar.dc.dsw.GameTesting.model.Projeto projeto) {
         ProjetoDTO dto = new ProjetoDTO();
@@ -28,6 +29,11 @@ public class ProjetoDTO {
         if (projeto.getMembers() != null) {
             dto.setMembers(projeto.getMembers().stream()
                     .map(UserDTO::fromEntity)
+                    .toList());
+        }
+        if (projeto.getSessions() != null) {
+            dto.setSessions(projeto.getSessions().stream()
+                    .map(SessionResponseDTO::fromEntity)
                     .toList());
         }
         return dto;
@@ -44,6 +50,12 @@ public class ProjetoDTO {
                     .map(UserDTO::toEntity)
                     .toList());
         }
+//        if (this.sessions != null) {
+//            projeto.setSessions(this.sessions.stream()
+//                    .map(SessionResponseDTO::toEntity)
+//                    .toList());
+//        }
+
         return projeto;
     }
 }

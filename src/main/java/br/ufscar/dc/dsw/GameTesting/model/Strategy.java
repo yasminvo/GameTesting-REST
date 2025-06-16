@@ -42,9 +42,9 @@ public class Strategy {
     private List<String> tips = new ArrayList<>();
 
     // Relacionamento One-to-One com Session (lado inverso)
-  //  @OneToOne(mappedBy = "strategy") // 'strategy' é o nome do campo na classe Session
-   // @JsonIgnore // Ignora este campo na serialização JSON para evitar loops
-  //  private Session session;
+    @OneToOne(mappedBy = "strategy") // 'strategy' é o nome do campo na classe Session
+    @JsonIgnore // Ignora este campo na serialização JSON para evitar loops
+    private Session session;
 
     public Strategy() {
     }
@@ -65,8 +65,8 @@ public class Strategy {
     public void setExamples(List<Example> examples) { this.examples = examples; }
     public List<String> getTips() { return tips; }
     public void setTips(List<String> tips) { this.tips = tips; }
-   // public Session getSession() { return session; }
-   // public void setSession(Session session) { this.session = session; }
+    public Session getSession() { return session; }
+    public void setSession(Session session) { this.session = session; }
 
     @Override
     public String toString() {

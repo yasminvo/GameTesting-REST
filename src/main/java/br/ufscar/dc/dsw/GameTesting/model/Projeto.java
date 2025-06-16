@@ -34,18 +34,18 @@ public class Projeto {
     @JsonIgnore
     private List<User> members = new ArrayList<>();
 
-//    // Relacionamento OneToMany com Session (possui)
-//    @OneToMany(mappedBy = "projeto", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<Session> sessions = new ArrayList<>();
+    @OneToMany(mappedBy = "projeto", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Session> sessions = new ArrayList<>();
 
     public Projeto() {
     }
 
-    public Projeto(String name, String description, List<User> members) {
+    public Projeto(String name, String description, List<User> members, List<Session> sessions) {
         this.name = name;
         this.description = description;
         this.creationDate = LocalDateTime.now();
         this.members = members;
+        this.sessions = sessions;
     }
 
     public Long getId() {
@@ -88,13 +88,13 @@ public class Projeto {
         this.members = members;
     }
 
-//    public List<Session> getSessions() {
-//        return sessions;
-//    }
-//
-//    public void setSessions(List<Session> sessions) {
-//        this.sessions = sessions;
-//    }
+    public List<Session> getSessions() {
+        return sessions;
+    }
+
+    public void setSessions(List<Session> sessions) {
+        this.sessions = sessions;
+    }
 
 
     @Override
