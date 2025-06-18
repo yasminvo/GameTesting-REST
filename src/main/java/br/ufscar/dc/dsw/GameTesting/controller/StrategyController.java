@@ -1,10 +1,11 @@
 package br.ufscar.dc.dsw.GameTesting.controller;
 
 import br.ufscar.dc.dsw.GameTesting.dtos.CreateStrategyDTO;
+import br.ufscar.dc.dsw.GameTesting.dtos.ExampleDTO;
+import br.ufscar.dc.dsw.GameTesting.dtos.ImageDTO;
 import br.ufscar.dc.dsw.GameTesting.dtos.StrategyResponseDTO;
 import br.ufscar.dc.dsw.GameTesting.exceptions.ResourceNotFoundException;
 import br.ufscar.dc.dsw.GameTesting.model.Strategy;
-import br.ufscar.dc.dsw.GameTesting.model.Example;
 import br.ufscar.dc.dsw.GameTesting.model.Image;
 import br.ufscar.dc.dsw.GameTesting.service.StrategyService;
 import br.ufscar.dc.dsw.GameTesting.service.ExampleService;
@@ -17,7 +18,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/strategies")
@@ -37,7 +37,7 @@ public class StrategyController {
     }
 
     @PostMapping("")
-    @PreAuthorize("hasRole('ADMIN')")  // TESTED - OK
+    @PreAuthorize("hasRole('ADMIN') or hasRole('TESTER')")  // TESTED - OK
     public ResponseEntity<?> createStrategy(@RequestBody CreateStrategyDTO strategyDTO) {
         Strategy savedStrategy = strategyService.save(strategyDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedStrategy);
@@ -50,14 +50,14 @@ public class StrategyController {
     }
 
     @GetMapping("/{id}")   // TESTED - OK
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('TESTER')")
     public ResponseEntity<?> getStrategyById(@PathVariable Long id) {
         StrategyResponseDTO responseDTO = strategyService.findById(id);
         return  ResponseEntity.status(HttpStatus.OK).body(responseDTO);
     }
 
     @PutMapping("/{id}") // TESTED - OK
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('TESTER')")
     public ResponseEntity<?> updateStrategy(@PathVariable Long id, @RequestBody CreateStrategyDTO dto) {
         try {
             StrategyResponseDTO updated = strategyService.update(id, dto);
@@ -68,7 +68,7 @@ public class StrategyController {
     }
 
     @DeleteMapping("/{id}")  // TESTED - OK
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('TESTER')")
     public ResponseEntity<Void> deleteStrategy(@PathVariable Long id) {
         try {
             strategyService.delete(id);
@@ -78,49 +78,33 @@ public class StrategyController {
         }
     }
 
-//    @PostMapping("/{strategyId}/examples")
-//    @PreAuthorize("hasRole('ADMIN')")
-//    public ResponseEntity<Example> addExampleToStrategy(
-//            @PathVariable Long strategyId,
-//            @RequestBody Example example) {
-//        try {
-//            // Este método chama ExampleService.save(example, strategyId) que é o correto
-//            Example savedExample = exampleService.save(example, strategyId);
-//            return new ResponseEntity<>(savedExample, HttpStatus.CREATED);
-//        } catch (RuntimeException e) {
-//            return new ResponseEntity<>(HttpStatus.NOT_FOUND); // Se a Strategy não for encontrada
-//        }
-//    }
-
-//    // Listar Examples de uma Strategy específica
-//    @GetMapping("/{strategyId}/examples")
-//    public ResponseEntity<List<Example>> getExamplesByStrategy(@PathVariable Long strategyId) {
-//        // Este método chama ExampleService.findByStrategyId(strategyId) que é o correto
-//        List<Example> examples = exampleService.findByStrategyId(strategyId);
-//        if (examples.isEmpty()) {
-//            // Retorna 404 se a strategy não existir ou se não tiver exemplos
-//            if (!strategyService.findById(strategyId).isPresent()) {
-//                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//            }
-//            return new ResponseEntity<>(examples, HttpStatus.OK); // 200 OK, lista vazia
-//        }
-//        return new ResponseEntity<>(examples, HttpStatus.OK);
-//    }
-
-    // Obter um Example específico
-    @GetMapping("/examples/{id}")
-    public ResponseEntity<Example> getExampleById(@PathVariable Long id) {
-        // Este método chama ExampleService.findById(id) que é o correto
-        Optional<Example> example = exampleService.findById(id);
-        return example.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
-                      .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    @PostMapping("/examples/{strategyId}") // TESTED - OK
+    @PreAuthorize("hasRole('ADMIN') or hasRole('TESTER')")
+    public ResponseEntity<?> addExampleToStrategy(@PathVariable Long strategyId, @RequestBody ExampleDTO exampleDTO) {
+        try {
+            ExampleDTO responseDTO = exampleService.save(exampleDTO, strategyId);
+            return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 
-    // Deletar um Example (requer login de administrador)
+    @GetMapping("/examples/{strategyId}")
+    @PreAuthorize("hasRole('ADMIN')")  // TESTED - OK
+    public ResponseEntity<?> getExamplesByStrategyId(@PathVariable Long strategyId) {
+        try {
+            List<ExampleDTO> responseDTO = exampleService.findByStrategyId(strategyId);
+            return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+
     @DeleteMapping("/examples/{id}")
+    @PreAuthorize("hasRole('ADMIN')") // TESTED - OK
     public ResponseEntity<Void> deleteExample(@PathVariable Long id) {
         try {
-            // Este método chama ExampleService.delete(id) que é o correto
             exampleService.delete(id);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (RuntimeException e) {
@@ -128,32 +112,27 @@ public class StrategyController {
         }
     }
 
-    // Upload/Salvar uma Image (requer login de administrador)
     @PostMapping("/images")
-    public ResponseEntity<Image> uploadImage(@RequestBody Image image) {
+    @PreAuthorize("hasRole('ADMIN')") // TESTED - OK
+    public ResponseEntity<?> uploadImage(@RequestBody ImageDTO imageDTO) {
         try {
-            // Este método chama ImageService.saveImage(image) que é o correto
-            Image savedImage = imageService.saveImage(image);
-            return new ResponseEntity<>(savedImage, HttpStatus.CREATED);
+            ImageDTO responseDTO = imageService.saveImage(imageDTO);
+            return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
         } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST); // Se filePath estiver vazio
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
-    // Obter uma Image por ID
-    @GetMapping("/images/{id}")
-    public ResponseEntity<Image> getImageById(@PathVariable Long id) {
-        // Este método chama ImageService.findImageById(id) que é o correto
-        Optional<Image> image = imageService.findImageById(id);
-        return image.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
-                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    @GetMapping("/images")
+    @PreAuthorize("hasRole('ADMIN')")  // TESTED - OK
+    public ResponseEntity<List<Image>> getAllImages() {
+        List<Image> images = imageService.findAllImages();
+        return ResponseEntity.status(HttpStatus.OK).body(images);
     }
 
-    // Deletar uma Image
-    @DeleteMapping("/images/{id}")
-    public ResponseEntity<Void> deleteImage(@PathVariable Long id) {
+    @DeleteMapping("/images/{id}")   // TESTED - OK
+    public ResponseEntity<?> deleteImage(@PathVariable Long id) {
         try {
-            // Este método chama ImageService.deleteImage(id) que é o correto
             imageService.deleteImage(id);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (RuntimeException e) {

@@ -67,13 +67,13 @@ public class SessionService {
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
         Projeto projeto = projetoRepository.findById(sessionCreateDTO.getProjectId())
                 .orElseThrow(() -> new EntityNotFoundException("Project not found"));
-//        Strategy strategy = strategyRepository.findById(sessionCreateDTO.strategyId())
-//              .orElseThrow(() -> new EntityNotFoundException("Strategy not found"));
+        Strategy strategy = strategyRepository.findById(sessionCreateDTO.getStrategyId())
+              .orElseThrow(() -> new EntityNotFoundException("Strategy not found"));
 
         Session session = new Session();
         session.setTester(tester);
         session.setProjeto(projeto);
-//        session.setStrategy(strategy);
+        session.setStrategy(strategy);
         session.setDescription(sessionCreateDTO.getDescription());
         session.setDuration(sessionCreateDTO.getDuration());
         session.setStatus(Status.CREATED);

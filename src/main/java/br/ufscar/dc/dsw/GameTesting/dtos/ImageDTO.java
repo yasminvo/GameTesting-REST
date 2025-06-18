@@ -1,6 +1,5 @@
 package br.ufscar.dc.dsw.GameTesting.dtos;
 
-import br.ufscar.dc.dsw.GameTesting.model.Example;
 import br.ufscar.dc.dsw.GameTesting.model.Image;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,9 +17,19 @@ public class ImageDTO {
     private String altPath;
 
     public static ImageDTO fromEntity(Image image) {
+        if (image == null) {
+            return null;
+        }
         return new ImageDTO(
                 image.getFilePath(),
                 image.getAltText()
         );}
+
+    public Image toEntity() {
+        Image image = new Image();
+        image.setFilePath(this.filePath);
+        image.setAltText(this.altPath);
+        return image;
+    }
 
 }

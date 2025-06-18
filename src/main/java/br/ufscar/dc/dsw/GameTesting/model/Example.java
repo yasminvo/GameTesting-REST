@@ -21,18 +21,15 @@ public class Example {
     private Long id;
 
     @Column(columnDefinition = "TEXT")
-    private String text; // Conteúdo textual do exemplo
+    private String text;
 
-    // Relacionamento One-to-One com Image
-    // example_id será chave estrangeira em image
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true) // Salva/remove Image junto com Example
-    @JoinColumn(name = "image_id", referencedColumnName = "id", unique = true) // Coluna da FK na tabela example
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "image_id", referencedColumnName = "id", unique = true)
     private Image image;
 
-    // Relacionamento Many-to-One com Strategy
     @ManyToOne
-    @JoinColumn(name = "strategy_id", nullable = false) // Coluna da FK na tabela example
-    @JsonBackReference // Ignora este lado na serialização JSON para evitar loops
+    @JoinColumn(name = "strategy_id", nullable = false)
+    @JsonBackReference
     private Strategy strategy;
 
     public Example() {

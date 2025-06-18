@@ -20,7 +20,7 @@ public class SessionResponseDTO{
     private Long id;
     private UserDTO tester;
     private ProjetoDTO projeto;
-    //StrategyDTO strategy;
+    private StrategyResponseDTO strategy;
     private Integer duration;
     private String description;
     private Status status;
@@ -31,6 +31,7 @@ public class SessionResponseDTO{
                 session.getId(),
                 UserDTO.fromEntity(session.getTester()),
                 ProjetoDTO.fromEntity(session.getProjeto()),
+                StrategyResponseDTO.fromEntity(session.getStrategy()),
                 session.getDuration(),
                 session.getDescription(),
                 session.getStatus(),

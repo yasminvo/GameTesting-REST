@@ -1,11 +1,15 @@
 package br.ufscar.dc.dsw.GameTesting.service;
 
-import br.ufscar.dc.dsw.GameTesting.repository.ImageRepository; 
-import br.ufscar.dc.dsw.GameTesting.model.Image; 
+import br.ufscar.dc.dsw.GameTesting.dtos.ImageDTO;
+import br.ufscar.dc.dsw.GameTesting.repository.ImageRepository;
+import br.ufscar.dc.dsw.GameTesting.model.Image;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.Optional; 
+
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional 
@@ -18,32 +22,25 @@ public class ImageService {
         this.imageRepository = imageRepository;
     }
 
-    /**
-     * Salva uma nova Image independentemente(sem associá-la a um Example)
-     * @param image 
-     * @return 
-     */
-    public Image saveImage(Image image) {
-        if (image.getFilePath() == null || image.getFilePath().trim().isEmpty()) {
+    public ImageDTO saveImage(ImageDTO imageDTO) {
+        if (imageDTO.getFilePath() == null || imageDTO.getFilePath().trim().isEmpty()) {
             throw new IllegalArgumentException("O caminho do arquivo (filePath) da imagem não pode ser vazio.");
         }
-        return imageRepository.save(image);
+        Image image = imageRepository.save(imageDTO.toEntity());
+        return ImageDTO.fromEntity(image);
     }
 
-    /**
-     * Busca uma Image pelo seu ID.
-     * @param id 
-     * @return
-     */
-    @Transactional(readOnly = true) 
-    public Optional<Image> findImageById(Long id) {
-        return imageRepository.findById(id);
+    @Transactional(readOnly = true)
+    public List<Image> findAllImages() {
+        List<Image> images = imageRepository.findAll();
+
+        if (images.isEmpty()) {
+            throw new EntityNotFoundException("Nenhuma imagem encontrada.");
+        }
+
+        return images;
     }
 
-    /**
-     * Exclui uma Image pelo seu ID.
-     * @param id
-     */
     public void deleteImage(Long id) {
         if (imageRepository.existsById(id)) {
             imageRepository.deleteById(id);

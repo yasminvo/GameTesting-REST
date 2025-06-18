@@ -34,7 +34,7 @@ public class Session {
     @Column(name = "duration_em_minutos")
     private Integer duration;
 
-    @Lob //para string grandes
+    @Lob
     @Column(nullable = false)
     private String description;
 
@@ -50,9 +50,9 @@ public class Session {
     public Session() {
     }
 
-    public Session(User tester,/* Strategy strategy,*/ Projeto projeto, String description, Status initialStatus) {
+    public Session(User tester, Strategy strategy, Projeto projeto, String description, Status initialStatus) {
         this.tester = tester;
-        //this.strategy = strategy;
+        this.strategy = strategy;
         this.projeto = projeto;
         this.description = description;
         this.status = initialStatus;
@@ -74,13 +74,13 @@ public class Session {
         this.tester = tester;
     }
 
-//    public Strategy getStrategy() {
-//        return strategy;
-//    }
-//
-//    public void setStrategy(Strategy strategy) {
-//        this.strategy = strategy;
-//    }
+    public Strategy getStrategy() {
+        return strategy;
+    }
+
+    public void setStrategy(Strategy strategy) {
+        this.strategy = strategy;
+    }
 
     public Projeto getProjeto() {
         return projeto;

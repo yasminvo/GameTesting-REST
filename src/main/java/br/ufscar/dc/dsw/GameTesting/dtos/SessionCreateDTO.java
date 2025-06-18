@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class SessionCreateDTO{
     private Long projectId;
-    //        Long strategyId,
+    private Long strategyId;
     private Integer duration;
     private String description;
     private String testerEmail;
