@@ -31,19 +31,16 @@ public class Strategy {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    // Relacionamento OneToMany com Example
     @OneToMany(mappedBy = "strategy", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Example> examples = new ArrayList<>();
 
-    // @ElementCollection para lista de Strings (tips)
     @ElementCollection
     @CollectionTable(name = "strategy_tips", joinColumns = @JoinColumn(name = "strategy_id"))
-    @Column(name = "tip") // Nome da coluna na tabela 'strategy_tips'
+    @Column(name = "tip")
     private List<String> tips = new ArrayList<>();
 
-    // Relacionamento One-to-One com Session (lado inverso)
-    @OneToOne(mappedBy = "strategy") // 'strategy' é o nome do campo na classe Session
-    @JsonIgnore // Ignora este campo na serialização JSON para evitar loops
+    @OneToOne(mappedBy = "strategy")
+    @JsonIgnore
     private Session session;
 
     public Strategy() {

@@ -1,21 +1,30 @@
 package br.ufscar.dc.dsw.GameTesting.dtos;
 
 import br.ufscar.dc.dsw.GameTesting.enums.Status;
+import br.ufscar.dc.dsw.GameTesting.model.Projeto;
 import br.ufscar.dc.dsw.GameTesting.model.Session;
+import br.ufscar.dc.dsw.GameTesting.model.User;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-public record SessionResponseDTO(
-        Long id,
-        UserDTO tester,
-        ProjetoDTO projeto,
-        //StrategyDTO strategy,
-        Integer duration,
-        String description,
-        Status status,
-        List<LocalDateTime> statusChangedTime
-) {
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+public class SessionResponseDTO{
+    private Long id;
+    private UserDTO tester;
+    private ProjetoDTO projeto;
+    //StrategyDTO strategy;
+    private Integer duration;
+    private String description;
+    private Status status;
+    private List<LocalDateTime> statusChangedTime;
 
     public static SessionResponseDTO fromEntity(Session session) {
         return new SessionResponseDTO(

@@ -1,6 +1,7 @@
 package br.ufscar.dc.dsw.GameTesting.model;
 
 import br.ufscar.dc.dsw.GameTesting.enums.Status;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -16,15 +17,18 @@ public class Session {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
     @JoinColumn(name = "tester", nullable = false)
     private User tester;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "strategy", nullable = false)
+    @JsonIgnore
+    @JoinColumn(name = "strategy")
     private Strategy strategy;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "projeto", nullable = false)
+    @JsonIgnore
     private Projeto projeto;
 
     @Column(name = "duration_em_minutos")
@@ -46,9 +50,9 @@ public class Session {
     public Session() {
     }
 
-    public Session(User tester, Strategy strategy, Projeto projeto, String description, Status initialStatus) {
+    public Session(User tester,/* Strategy strategy,*/ Projeto projeto, String description, Status initialStatus) {
         this.tester = tester;
-        this.strategy = strategy;
+        //this.strategy = strategy;
         this.projeto = projeto;
         this.description = description;
         this.status = initialStatus;
@@ -70,13 +74,13 @@ public class Session {
         this.tester = tester;
     }
 
-    public Strategy getStrategy() {
-        return strategy;
-    }
-
-    public void setStrategy(Strategy strategy) {
-        this.strategy = strategy;
-    }
+//    public Strategy getStrategy() {
+//        return strategy;
+//    }
+//
+//    public void setStrategy(Strategy strategy) {
+//        this.strategy = strategy;
+//    }
 
     public Projeto getProjeto() {
         return projeto;

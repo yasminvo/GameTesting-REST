@@ -29,47 +29,42 @@ public class SessionController {
         this.sessionService = sessionService;
     }
 
-    @GetMapping
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<SessionResponseDTO>> getAllSessions(@RequestParam(defaultValue = "creationDate") String sort) {
-        List<SessionResponseDTO> response = sessionService.listAllSorted(sort);
+    @GetMapping("")
+    @PreAuthorize("hasRole('ADMIN')")    // TESTED - OK
+    public ResponseEntity<?> getAllSessions() {
+        List<SessionResponseDTO> response = sessionService.listAll();
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    @GetMapping("/{sessionId}")
+    @PreAuthorize("hasRole('TESTER') or hasRole('ADMIN')")  // TESTED - OK
+    public ResponseEntity<?> getSessionById(@PathVariable Long sessionId) {
 
-    @GetMapping("/{id}")
-    @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<SessionResponseDTO> getSessionById(@PathVariable Long id, Principal principal) {
-        return sessionService.findSessionByIdForUser(id, principal)
-                .map(session -> ResponseEntity.ok(SessionResponseDTO.fromEntity(session)))
-                .orElse(ResponseEntity.notFound().build());
+        SessionResponseDTO responseDTO = sessionService.findSessionById(sessionId);
+        return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
     }
 
-    @GetMapping("/project/{projectId}")
+    @GetMapping("/project/{projectId}") // TESTED - OK
     @PreAuthorize("hasRole('TESTER') or hasRole('ADMIN')")
-    public ResponseEntity<List<SessionResponseDTO>> getSessionsByProject(@PathVariable Long projectId, Principal principal) {
-        List<SessionResponseDTO> responseDTOs = sessionService.findSessionsByProjectForUser(projectId, principal);
+    public ResponseEntity<?> getSessionsByProject(@PathVariable Long projectId) {
+        List<SessionResponseDTO> responseDTOs = sessionService.findSessionsByProjectId(projectId);
         return ResponseEntity.ok(responseDTOs);
     }
 
-    @PreAuthorize("hasRole('TESTER') or hasRole('ADMIN')")
     @PostMapping("")
-    public ResponseEntity createSession(@RequestBody SessionCreateDTO createDTO, Principal principal) {
-        Session novaSessao = sessionService.createSession(createDTO, principal.getName());
+    @PreAuthorize("hasRole('TESTER') or hasRole('ADMIN')") // TESTED - OK
+    public ResponseEntity createSession(@RequestBody SessionCreateDTO createDTO) {
+        Session novaSessao = sessionService.createSession(createDTO);
         SessionResponseDTO responseDTO = SessionResponseDTO.fromEntity(novaSessao);
 
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentRequest().path("/{id}")
-                .buildAndExpand(novaSessao.getId()).toUri();
-
-        return ResponseEntity.created(location).body(responseDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
 
-    @PreAuthorize("hasRole('TESTER') or hasRole('ADMIN')")
-    @PostMapping("/{id}/start")
-    public ResponseEntity<?> startSession(@PathVariable Long id, Principal principal) {
+    @PreAuthorize("hasRole('TESTER') or hasRole('ADMIN')") // TESTED - OK
+    @PostMapping("/{sessionId}/start")
+    public ResponseEntity<?> startSession(@PathVariable Long sessionId) {
         try {
-            Session updatedSession = sessionService.startSession(id, principal.getName());
+            Session updatedSession = sessionService.startSession(sessionId);
             return ResponseEntity.ok(SessionResponseDTO.fromEntity(updatedSession));
         } catch (AccessDeniedException e) {
             return ResponseEntity.status(403).body(e.getMessage());
@@ -80,11 +75,11 @@ public class SessionController {
         }
     }
 
-    @PreAuthorize("hasRole('TESTER') or hasRole('ADMIN')")
     @PostMapping("/{id}/finalize")
-    public ResponseEntity<?> finalizeSession(@PathVariable Long id, Principal principal) {
+    @PreAuthorize("hasRole('TESTER') or hasRole('ADMIN')") // TESTED - OK
+    public ResponseEntity<?> finalizeSession(@PathVariable Long id) {
         try {
-            Session updatedSession = sessionService.finalizeSession(id, principal.getName());
+            Session updatedSession = sessionService.finalizeSession(id);
             return ResponseEntity.ok(SessionResponseDTO.fromEntity(updatedSession));
         } catch (AccessDeniedException e) {
             return ResponseEntity.status(403).body(e.getMessage());

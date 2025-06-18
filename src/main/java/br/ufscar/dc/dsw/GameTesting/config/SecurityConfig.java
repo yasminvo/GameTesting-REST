@@ -49,11 +49,7 @@ public class SecurityConfig {
                                 "/favicon.ico",
                                 "/app/**",
                                 "/utils/**").permitAll()
-
-
-                        .requestMatchers(HttpMethod.POST, "/strategies").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/strategies/**").hasRole("ADMIN")
-
+                        .requestMatchers(HttpMethod.GET, "/strategies").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session

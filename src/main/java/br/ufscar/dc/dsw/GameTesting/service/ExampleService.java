@@ -38,20 +38,20 @@ public class ExampleService {
      * @param strategyId 
      * @return 
      */
-    public Example save(Example example, Long strategyId) {
-        Strategy strategy = strategyRepository.findById(strategyId)
-                .orElseThrow(() -> new RuntimeException("Strategy com ID " + strategyId + " não encontrada."));
-        
-        example.setStrategy(strategy);
-        if (example.getImage() != null) {
-            example.getImage().setExample(example);
-        }
-        return exampleRepository.save(example);
-    }
+//    public Example save(Example example, Long strategyId) {
+//        Strategy strategy = strategyRepository.findById(strategyId)
+//                .orElseThrow(() -> new RuntimeException("Strategy com ID " + strategyId + " não encontrada."));
+//
+//        example.setStrategy(strategy);
+//        if (example.getImage() != null) {
+//            example.getImage().setExample(example);
+//        }
+//        return exampleRepository.save(example);
+//    }
 
     /**
      * Busca um Example pelo seu ID.
-     * @param id 
+     * @param id
      * @return
      */
     @Transactional(readOnly = true)

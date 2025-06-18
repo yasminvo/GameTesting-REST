@@ -18,14 +18,10 @@ public class Image {
     private Long id;
 
     @Column(nullable = false)
-    private String filePath; // Caminho ou URL para a imagem
+    private String filePath;
 
     @Column(columnDefinition = "TEXT")
-    private String altText; // Texto alternativo para a imagem
-
-    @OneToOne(mappedBy = "image") // 'image' é o nome do campo na classe Example
-    @JsonIgnore // Ignora este campo na serialização JSON para evitar loops
-    private Example example;
+    private String altText;
 
     public Image() {
     }
@@ -42,8 +38,6 @@ public class Image {
     public void setFilePath(String filePath) { this.filePath = filePath; }
     public String getAltText() { return altText; }
     public void setAltText(String altText) { this.altText = altText; }
-    public Example getExample() { return example; }
-    public void setExample(Example example) { this.example = example; }
 
     @Override
     public String toString() {
