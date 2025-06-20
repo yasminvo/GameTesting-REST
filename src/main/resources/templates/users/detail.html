@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <title>Detalhes do Usuário</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+<header>
+    <h1>Detalhes do Usuário</h1>
+    <nav>
+        <a th:href="@{/users/list}">Voltar para Lista</a>
+    </nav>
+</header>
+
+<section>
+    <p><strong>ID:</strong> <span th:text="${user.id}">1</span></p>
+    <p><strong>Email:</strong> <span th:text="${user.email}">email@example.com</span></p>
+    <p><strong>Role:</strong> <span th:text="${user.role}">ADMIN</span></p>
+</section>
+</body>
+</html>

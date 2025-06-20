@@ -26,17 +26,10 @@ import java.util.stream.Collectors;
 public class StrategyService {
 
     private final StrategyRepository strategyRepository;
-    private final ExampleRepository exampleRepository; 
-    private final ImageRepository imageRepository; 
-    
-    @Autowired
-    public StrategyService(StrategyRepository strategyRepository, 
-                           ExampleRepository exampleRepository, 
-                           ImageRepository imageRepository) {
 
+    @Autowired
+    public StrategyService(StrategyRepository strategyRepository) {
         this.strategyRepository = strategyRepository;
-        this.exampleRepository = exampleRepository;
-        this.imageRepository = imageRepository;
     }
 
     public Strategy save(CreateStrategyDTO dto) {
@@ -135,26 +128,5 @@ public class StrategyService {
         strategyRepository.deleteById(id);
     }
 
-
-    /**
-     * Adiciona um Example a uma Strategy existente.
-     *
-     * @param strategyId O ID da Strategy.
-     * @param example O Example a ser adicionado.
-     * @return A Strategy atualizada.
-     */
-//    public Strategy addExampleToStrategy(Long strategyId, Example example) {
-//        Strategy strategy = strategyRepository.findById(strategyId)
-//                                .orElseThrow(() -> new RuntimeException("Strategy não encontrada"));
-//
-//        // Garante a referência bidirecional
-//        example.setStrategy(strategy);
-//        if (example.getImage() != null) {
-//            example.getImage().setExample(example);
-//        }
-//
-//        strategy.getExamples().add(example);
-//        return strategyRepository.save(strategy); // Salva a Strategy para persistir o novo Example
-//    }
 
 }

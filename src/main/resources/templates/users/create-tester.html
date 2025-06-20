@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <title>Criar Tester</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+<header>
+    <h1>Criar Tester</h1>
+<!--    <nav>-->
+<!--        <a th:href="@{/users}">Voltar para Lista</a>-->
+<!--    </nav>-->
+</header>
+
+<form th:action="@{/users/create-tester}" method="post" th:object="${user}">
+    <input type="text" th:field="*{name}" placeholder="Nome" />
+    <input type="email" th:field="*{email}" placeholder="Email" />
+    <input type="password" th:field="*{password}" placeholder="Senha" />
+    <button type="submit">Criar</button>
+</form>
+</body>
+</html>
