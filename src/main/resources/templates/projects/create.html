@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Criar Projeto</title>
+</head>
+<body>
+<h1>Criar Novo Projeto</h1>
+
+<form th:action="@{/projects/create}" th:object="${projeto}" method="post">
+    <label th:for="*{name}">Nome:</label>
+    <input type="text" th:field="*{name}" required />
+    <br />
+
+    <label th:for="*{description}">Descrição:</label>
+    <textarea th:field="*{description}" required></textarea>
+    <br />
+
+    <label for="memberIds">Membros:</label>
+    <select id="memberIds" th:field="*{memberIds}" multiple>
+        <option th:each="usuario : ${usuarios}"
+                th:value="${usuario.id}"
+                th:text="${usuario.name}">
+        </option>
+    </select>
+
+    <br />
+
+    <button type="submit">Salvar</button>
+</form>
+<a th:href="@{/projects}">Cancelar</a>
+
+</body>
+</html>

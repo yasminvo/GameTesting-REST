@@ -1,14 +1,6 @@
 package br.ufscar.dc.dsw.GameTesting.controller;
 
-import br.ufscar.dc.dsw.GameTesting.enums.Role;
-import br.ufscar.dc.dsw.GameTesting.repository.UserRepository;
-import br.ufscar.dc.dsw.GameTesting.utils.JwtUtil;
-import br.ufscar.dc.dsw.GameTesting.service.CustomUserDetailsService;
-import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -16,18 +8,6 @@ import org.springframework.web.bind.annotation.*;
 
 @Controller
 public class AuthController {
-
-    @Autowired
-    private AuthenticationManager authManager;
-
-    @Autowired
-    private JwtUtil jwtUtil;
-
-    @Autowired
-    private CustomUserDetailsService userDetailsService;
-
-    @Autowired
-    private UserRepository userRepository;
 
     @GetMapping("/login")
     public String login(
@@ -41,34 +21,18 @@ public class AuthController {
         if (logout != null) {
             model.addAttribute("msg", "Logout realizado com sucesso.");
         }
-        return "login"; // nome do template login.html
+        return "login";
     }
 
-    @PostMapping("/login")
-    public String postLogin(@RequestParam String email,
-                        @RequestParam String password,
-                        Model model,
-                        HttpServletRequest request) {
-        try {
-            authManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
-
-            var userDetails = userDetailsService.loadUserByUsername(email);
-            var user = userRepository.findByEmail(email).orElseThrow();
-
-            Role role = user.getRole();
-            String token = jwtUtil.generateToken(userDetails, role);
-
-            request.getSession().setAttribute("token", token);
-
-            if (role == Role.ADMIN) {
-                return "redirect:/users/dashboard";
-            } else {
-                return "redirect:/tester-dashboard";
-            }
-
-        } catch (AuthenticationException e) {
-            model.addAttribute("error", "Usuário ou senha inválidos");
-            return "login";
+    @GetMapping("/users/redirect")
+    public String redirectBasedOnRole(Authentication authentication) {
+        if (authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
+            return "redirect:/users/dashboard";
+        } else if (authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_TESTER"))) {
+            return "redirect:/tester/dashboard";
         }
+        return "access-denied";
     }
 }

@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -17,7 +18,10 @@ public class ProjetoDTO {
     private String name;
     private String description;
     private LocalDateTime creationDate;
-    private List<UserDTO> members;
+    private List<UserDTO> members = new ArrayList<>();
+    private List<Long> memberIds = new ArrayList<>();
+
+
 //    private List<SessionResponseDTO> sessions;
 
     public static ProjetoDTO fromEntity(br.ufscar.dc.dsw.GameTesting.model.Projeto projeto) {

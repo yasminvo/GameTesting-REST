@@ -4,6 +4,7 @@ import br.ufscar.dc.dsw.GameTesting.enums.Role;
 import br.ufscar.dc.dsw.GameTesting.model.User;
 import br.ufscar.dc.dsw.GameTesting.service.UserService;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -14,7 +15,7 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/users")
-@PreAuthorize("hasRole('ADMIN')")
+@PreAuthorize("hasRole('ADMIN') or hasRole('TESTER')")
 public class UserController {
 
     private final UserService userService;
@@ -24,9 +25,10 @@ public class UserController {
     }
 
     @GetMapping("/dashboard")
-    public String showDashboard() {
+    public String showAdminDashboard() {
         return "users/dashboard";
     }
+
 
     @GetMapping("list")
     public String listUsers(Model model) {
@@ -60,7 +62,7 @@ public class UserController {
     @GetMapping("/create-tester")
     public String showCreateTesterForm(Model model) {
         model.addAttribute("user", new User());
-        return "users/create-tester"; // template users/create-tester.html
+        return "users/create-tester";
     }
 
     @PostMapping("/create-tester")
@@ -69,7 +71,7 @@ public class UserController {
             return "users/create-tester";
         }
         userService.create(user, Role.TESTER);
-        return "redirect:/users";
+        return "redirect:/users/list";
     }
 
     @GetMapping("/edit/{id}")
@@ -94,3 +96,4 @@ public class UserController {
         return "redirect:/users/list";
     }
 }
+

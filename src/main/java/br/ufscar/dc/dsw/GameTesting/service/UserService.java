@@ -1,5 +1,6 @@
 package br.ufscar.dc.dsw.GameTesting.service;
 
+import br.ufscar.dc.dsw.GameTesting.dtos.UserDTO;
 import br.ufscar.dc.dsw.GameTesting.enums.Role;
 import br.ufscar.dc.dsw.GameTesting.exceptions.AppException;
 import br.ufscar.dc.dsw.GameTesting.model.User;
@@ -8,8 +9,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -59,6 +62,15 @@ public class UserService {
         User existingUser = findById(id);
         userRepository.delete(existingUser);
     }
+
+    public List<UserDTO> getUsersByIds(List<Long> ids) {
+        if (ids == null || ids.isEmpty()) return new ArrayList<>();
+        return userRepository.findAllById(ids)
+                .stream()
+                .map(UserDTO::fromEntity)
+                .collect(Collectors.toList());
+    }
+
 
 
 

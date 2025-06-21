@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Projetos</title>
+</head>
+<body>
+<h1>Projetos</h1>
+
+<a th:href="@{/projects/create}">Criar Novo Projeto</a>
+
+<form method="get" th:action="@{/projects/list}">
+    <label for="sort">Ordenar por:</label>
+    <select name="sort" id="sort">
+        <option value="creationDate" th:selected="${param.sort == 'creationDate'}">Data de Criação (asc)</option>
+        <option value="creationDate_desc" th:selected="${param.sort == 'creationDate_desc'}">Data de Criação (desc)</option>
+        <option value="name" th:selected="${param.sort == 'name'}">Nome (A-Z)</option>
+        <option value="name_desc" th:selected="${param.sort == 'name_desc'}">Nome (Z-A)</option>
+    </select>
+    <button type="submit">Ordenar</button>
+</form>
+
+<table border="1">
+    <thead>
+    <tr>
+        <th>Nome</th>
+        <th>Descrição</th>
+        <th>Data de Criação</th>
+        <th>Ações</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="projeto : ${projetos}">
+        <td th:text="${projeto.name}">Nome</td>
+        <td th:text="${projeto.description}">Descrição</td>
+        <td th:text="${#temporals.format(projeto.creationDate, 'dd/MM/yyyy HH:mm')}">Data</td>
+        <td>
+            <a th:href="@{/projects/{id}(id=${projeto.id})}">Ver</a> |
+            <a th:href="@{/projects/edit/{id}(id=${projeto.id})}">Editar</a> |
+            <form th:action="@{/projects/delete/{id}(id=${projeto.id})}" method="post" style="display:inline;">
+                <button type="submit" onclick="return confirm('Tem certeza que deseja deletar este projeto?');">Deletar</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

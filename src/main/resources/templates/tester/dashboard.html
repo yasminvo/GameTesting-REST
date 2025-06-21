@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
 <head>
     <meta charset="UTF-8" />
-    <title>Dashboard - Sistema (Admin)</title>
+    <title>Dashboard - Sistema (Tester)</title>
     <link rel="stylesheet" href="/css/styles.css" />
 </head>
 <body>
@@ -15,11 +15,7 @@
 
 <nav>
     <ul>
-        <li><a th:href="@{/users/list}">Listar usuários</a></li>
-        <li><a th:href="@{/users/create-tester}">Cadastrar Tester</a></li>
-        <li><a th:href="@{/users/create-admin}">Cadastrar Admin</a></li>
-        <li><a th:href="@{/projects/list}">Gerenciar Projetos</a></li>
-        <li><a href="#">Cadastro de Estratégias</a></li>
+        <li><a th:href="@{/projects/view-tester}">Listar Projetos</a></li>
         <li><a href="#">Cadastro Sessão de Teste</a></li>
     </ul>
 </nav>
@@ -27,6 +23,7 @@
 <main>
     <p>Bem-vindo ao painel administrativo.</p>
 
+    <!-- Você pode adicionar mais seções e dados conforme a necessidade -->
 
 </main>
 </body>

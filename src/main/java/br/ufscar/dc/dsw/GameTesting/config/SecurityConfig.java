@@ -10,7 +10,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-
 @Configuration
 @EnableMethodSecurity
 public class SecurityConfig {
@@ -24,18 +23,18 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable()) // para facilitar, depois avalie CSRF para produção
+                .csrf(csrf -> csrf.disable()) // para ambiente local
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/login", "/auth/**", "/css/**", "/js/**", "/images/**", "/favicon.ico"
                         ).permitAll()
-                        .requestMatchers("/users/dashboard/**").hasRole("ADMIN")
-                        .requestMatchers("/tester-dashboard/**").hasRole("TESTER")
+                        .requestMatchers("/users/**").hasAnyRole("ADMIN", "TESTER")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
-                        .defaultSuccessUrl("/users/dashboard", true)
+                        .loginProcessingUrl("/login") // POST /login será tratado automaticamente
+                        .defaultSuccessUrl("/users/redirect", true)
                         .permitAll()
                 )
                 .logout(logout -> logout
@@ -52,7 +51,6 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    // Necessário para o login funcionar, delega para seu userDetailsService
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
