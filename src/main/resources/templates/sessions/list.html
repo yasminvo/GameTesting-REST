@@ -34,7 +34,7 @@
             <form th:action="@{'/sessions/start/' + ${sessionT.id}}" method="post" style="display: inline;">
                 <button type="submit">Iniciar Execução</button>
             </form>
-            <form th:if="${sessionT.status == 'IN_EXECUTION'}"
+            <form th:if="${#strings.toUpperCase(sessionT.status.toString()) == 'IN_EXECUTION'}"
                   th:action="@{'/sessions/start/' + ${sessionT.id}}" method="post" style="display: inline;">
                 <button type="submit">Reportar Bugs</button>
             </form>
