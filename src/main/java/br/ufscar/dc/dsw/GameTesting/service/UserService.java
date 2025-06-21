@@ -48,6 +48,12 @@ public class UserService {
     public User update(Long id, User userDetails) {
         User existingUser = findById(id);
 
+        userRepository.findByEmail(userDetails.getEmail())
+                .filter(u -> !u.getId().equals(id))
+                .ifPresent(u -> {
+                    throw new AppException("Email já cadastrado para outro usuário.", HttpStatus.BAD_REQUEST);
+                });
+
         existingUser.setName(userDetails.getName());
         existingUser.setEmail(userDetails.getEmail());
 
@@ -60,7 +66,11 @@ public class UserService {
 
     public void delete(Long id) {
         User existingUser = findById(id);
-        userRepository.delete(existingUser);
+        try {
+            userRepository.delete(existingUser);
+        } catch (Exception e) {
+            throw new AppException("Não foi possível deletar o usuário: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     public List<UserDTO> getUsersByIds(List<Long> ids) {

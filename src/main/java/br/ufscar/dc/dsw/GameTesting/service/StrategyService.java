@@ -2,20 +2,15 @@ package br.ufscar.dc.dsw.GameTesting.service;
 import br.ufscar.dc.dsw.GameTesting.dtos.CreateStrategyDTO;
 import br.ufscar.dc.dsw.GameTesting.dtos.ImageDTO;
 import br.ufscar.dc.dsw.GameTesting.dtos.StrategyResponseDTO;
-import br.ufscar.dc.dsw.GameTesting.exceptions.ResourceNotFoundException;
+import br.ufscar.dc.dsw.GameTesting.exceptions.AppException;
 import br.ufscar.dc.dsw.GameTesting.repository.StrategyRepository;
-import br.ufscar.dc.dsw.GameTesting.repository.ExampleRepository; 
-import br.ufscar.dc.dsw.GameTesting.repository.ImageRepository; 
-
 import br.ufscar.dc.dsw.GameTesting.model.Strategy;
 import br.ufscar.dc.dsw.GameTesting.model.Example;
 import br.ufscar.dc.dsw.GameTesting.model.Image;
-
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -33,6 +28,14 @@ public class StrategyService {
     }
 
     public Strategy save(CreateStrategyDTO dto) {
+        if (dto.getName() == null || dto.getName().isBlank()) {
+            throw new AppException("O nome da estratégia é obrigatório.", HttpStatus.BAD_REQUEST);
+        }
+
+        if (dto.getDescription() == null || dto.getDescription().isBlank()) {
+            throw new AppException("A descrição da estratégia é obrigatório.", HttpStatus.BAD_REQUEST);
+        }
+
         Strategy strategy = new Strategy();
         strategy.setName(dto.getName());
         strategy.setDescription(dto.getDescription());
@@ -76,20 +79,19 @@ public class StrategyService {
     @Transactional(readOnly = true)
     public StrategyResponseDTO findById(Long id) {
         Strategy strategy = strategyRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Estratégia não encontrada."));
+                .orElseThrow(() -> new AppException("Estratégia com ID " + id + " não encontrada.", HttpStatus.NOT_FOUND));
         return StrategyResponseDTO.fromEntity(strategy);
     }
 
     @Transactional
     public StrategyResponseDTO update(Long id, CreateStrategyDTO dto) {
         Strategy existing = strategyRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Estratégia não encontrada."));
+                .orElseThrow(() -> new AppException("Estratégia com ID " + id + " não encontrada para atualização.", HttpStatus.NOT_FOUND));
 
         existing.setName(dto.getName());
         existing.setDescription(dto.getDescription());
         existing.setTips(dto.getTips());
 
-        // Atualiza os exemplos
         existing.getExamples().clear();
 
         if (dto.getExamples() != null) {
@@ -118,12 +120,15 @@ public class StrategyService {
 
     @Transactional(readOnly = true)
     public Optional<Strategy> findByName(String name) {
+        if (name == null || name.isBlank()) {
+            throw new AppException("Nome da estratégia não pode ser vazio para busca.", HttpStatus.BAD_REQUEST);
+        }
         return strategyRepository.findByName(name);
     }
 
     public void delete(Long id) {
         if (!strategyRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Strategy com ID " + id + " não encontrada para exclusão.");
+            throw new AppException("Estratégia com ID " + id + " não encontrada para exclusão.", HttpStatus.NOT_FOUND);
         }
         strategyRepository.deleteById(id);
     }

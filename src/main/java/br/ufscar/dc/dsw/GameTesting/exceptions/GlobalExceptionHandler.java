@@ -1,26 +1,28 @@
 package br.ufscar.dc.dsw.GameTesting.exceptions;
 
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.ModelAndView;
 
-import java.util.Map;
-
-@RestControllerAdvice
+@ControllerAdvice
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(AppException.class)
-    public ResponseEntity<?> handleAppException(AppException ex) {
-        return ResponseEntity
-                .status(ex.getStatus())
-                .body(Map.of("message", ex.getMessage()));
+    public ModelAndView handleAppException(AppException ex, Model model) {
+        ModelAndView mav = new ModelAndView("/errors/custom-error");
+        mav.setStatus(ex.getStatus());
+        mav.addObject("message", ex.getMessage());
+        return mav;
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<?> handleGenericException(Exception ex) {
+    public ModelAndView handleGenericException(Exception ex, Model model) {
         ex.printStackTrace();
-        return ResponseEntity
-                .status(500)
-                .body(Map.of("message", "Erro interno no servidor."));
+        ModelAndView mav = new ModelAndView("/errors/custom-error");
+        mav.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+        mav.addObject("message", "Erro interno no servidor.");
+        return mav;
     }
 }

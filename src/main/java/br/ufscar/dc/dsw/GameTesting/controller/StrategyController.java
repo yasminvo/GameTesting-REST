@@ -3,8 +3,6 @@ package br.ufscar.dc.dsw.GameTesting.controller;
 import br.ufscar.dc.dsw.GameTesting.dtos.CreateStrategyDTO;
 import br.ufscar.dc.dsw.GameTesting.dtos.StrategyResponseDTO;
 import br.ufscar.dc.dsw.GameTesting.service.StrategyService;
-import br.ufscar.dc.dsw.GameTesting.service.ExampleService;
-import br.ufscar.dc.dsw.GameTesting.service.ImageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -18,16 +16,10 @@ import java.util.List;
 public class StrategyController {
 
     private final StrategyService strategyService;
-    private final ExampleService exampleService;
-    private final ImageService imageService;
 
     @Autowired
-    public StrategyController(StrategyService strategyService,
-                              ExampleService exampleService,
-                              ImageService imageService) {
+    public StrategyController(StrategyService strategyService) {
         this.strategyService = strategyService;
-        this.exampleService = exampleService;
-        this.imageService = imageService;
     }
 
     @PreAuthorize("hasRole('ADMIN') or hasRole('TESTER')")

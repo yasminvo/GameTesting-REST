@@ -46,11 +46,9 @@ public class ProjetoController {
     @PreAuthorize("hasRole('TESTER') or hasRole('ADMIN')")
     @GetMapping("/{id:\\d+}")
     public String viewProject(@PathVariable Long id, Model model) {
-        Optional<ProjetoDTO> projetoOpt = projetoService.getById(id);
-        if (projetoOpt.isEmpty()) {
-            return "redirect:/projects";
-        }
-        model.addAttribute("projeto", projetoOpt.get());
+        ProjetoDTO projetoOpt = projetoService.getById(id);
+
+        model.addAttribute("projeto", projetoOpt);
         return "projects/detail";
     }
 
@@ -79,11 +77,7 @@ public class ProjetoController {
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable Long id, Model model) {
-        Optional<ProjetoDTO> projetoOpt = projetoService.getById(id);
-        if (projetoOpt.isEmpty()) {
-            return "redirect:/projects";
-        }
-        ProjetoDTO projetoDTO = projetoOpt.get();
+        ProjetoDTO projetoDTO = projetoService.getById(id);
 
         projetoDTO.setMemberIds(
                 projetoDTO.getMembers().stream()

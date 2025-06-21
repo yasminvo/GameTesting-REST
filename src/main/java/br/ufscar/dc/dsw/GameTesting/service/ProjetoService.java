@@ -2,16 +2,16 @@ package br.ufscar.dc.dsw.GameTesting.service;
 
 import br.ufscar.dc.dsw.GameTesting.dtos.ProjetoDTO;
 import br.ufscar.dc.dsw.GameTesting.dtos.UserDTO;
+import br.ufscar.dc.dsw.GameTesting.exceptions.AppException;
 import br.ufscar.dc.dsw.GameTesting.model.Projeto;
 import br.ufscar.dc.dsw.GameTesting.model.User;
 import br.ufscar.dc.dsw.GameTesting.repository.ProjetoRepository;
 import br.ufscar.dc.dsw.GameTesting.repository.UserRepository;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -50,12 +50,21 @@ public class ProjetoService {
                 .collect(Collectors.toList());
     }
 
-    public Optional<ProjetoDTO> getById(Long id) {
+    public ProjetoDTO getById(Long id) {
         return projetoRepository.findById(id)
-                .map(ProjetoDTO::fromEntity);
+                .map(ProjetoDTO::fromEntity)
+                .orElseThrow(() -> new AppException("Projeto não encontrado.", HttpStatus.NOT_FOUND));
     }
 
     public ProjetoDTO createProjeto(ProjetoDTO projetoDTO) {
+        if (projetoDTO.getName() == null || projetoDTO.getName().isBlank()) {
+            throw new AppException("Nome do projeto é obrigatório.", HttpStatus.BAD_REQUEST);
+        }
+
+        if (projetoDTO.getDescription() == null || projetoDTO.getDescription().isBlank()) {
+            throw new AppException("Descrição do projeto é obrigatório.", HttpStatus.BAD_REQUEST);
+        }
+
         Projeto projeto = new Projeto();
         projeto.setName(projetoDTO.getName());
         projeto.setDescription(projetoDTO.getDescription());
@@ -73,31 +82,26 @@ public class ProjetoService {
         return ProjetoDTO.fromEntity(saved);
     }
 
-    public Optional<ProjetoDTO> updateProjeto(Long id, ProjetoDTO projetoDTO) {
-        Optional<Projeto> projetoOpt = projetoRepository.findById(id);
+    public ProjetoDTO updateProjeto(Long id, ProjetoDTO projetoDTO) {
+        Projeto projeto = projetoRepository.findById(id)
+                .orElseThrow(() -> new AppException("Projeto não encontrado para atualização.", HttpStatus.NOT_FOUND));
 
-        if (projetoOpt.isEmpty()) {
-            return Optional.empty();
-        }
-
-        Projeto projeto = projetoOpt.get();
         projeto.setName(projetoDTO.getName());
         projeto.setDescription(projetoDTO.getDescription());
         projeto.setMembers(projetoDTO.getMembers()
                 .stream()
-                .map(userDTO -> userDTO.toEntity())
+                .map(UserDTO::toEntity)
                 .collect(Collectors.toList()));
         projeto.setCreationDate(LocalDateTime.now());
 
         Projeto updated = projetoRepository.save(projeto);
-        return Optional.of(ProjetoDTO.fromEntity(updated));
+        return ProjetoDTO.fromEntity(updated);
     }
 
     public boolean deleteProjeto(Long id) {
-        Optional<Projeto> projetoOpt = projetoRepository.findById(id);
-        if (projetoOpt.isEmpty()) {
-            return false;
-        }
+        projetoRepository.findById(id)
+                .orElseThrow(() -> new AppException("Projeto não encontrado para exclusão.", HttpStatus.NOT_FOUND));
+
         projetoRepository.deleteById(id);
         return true;
     }

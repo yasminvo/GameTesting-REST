@@ -26,6 +26,7 @@
         <th>Nome</th>
         <th>Descrição</th>
         <th>Data de Criação</th>
+        <th>Membros</th>
         <th>Ações</th>
     </tr>
     </thead>
@@ -34,6 +35,11 @@
         <td th:text="${projeto.name}">Nome</td>
         <td th:text="${projeto.description}">Descrição</td>
         <td th:text="${#temporals.format(projeto.creationDate, 'dd/MM/yyyy HH:mm')}">Data</td>
+        <td>
+            <ul>
+                <li th:each="member : ${projeto.members}" th:text="${member.email}">Membros</li>
+            </ul>
+        </td>
         <td>
             <a th:href="@{/projects/{id}(id=${projeto.id})}">Ver</a> |
             <a th:href="@{/projects/edit/{id}(id=${projeto.id})}">Editar</a> |
