@@ -60,6 +60,14 @@ public class StrategyController {
     }
 
     @PreAuthorize("hasRole('ADMIN') or hasRole('TESTER')")
+    @GetMapping("/{id}")
+    public String fingStrategy(@PathVariable Long id, Model model) {
+        StrategyResponseDTO strategyDTO = strategyService.findById(id);
+        model.addAttribute("strategy", strategyDTO);
+        return "strategies/detail";
+    }
+
+    @PreAuthorize("hasRole('ADMIN') or hasRole('TESTER')")
     @PostMapping("/delete/{id}")
     public String deleteStrategy(@PathVariable Long id) {
         strategyService.delete(id);

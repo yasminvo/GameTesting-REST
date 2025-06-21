@@ -1,6 +1,6 @@
 <!-- templates/sessions/list.html -->
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <title>Lista de Sessões</title>
@@ -30,8 +30,18 @@
         <td th:text="${sessionT.status}"></td>
         <td>
             <a th:href="@{'/sessions/' + ${sessionT.id}}">Detalhes</a>
-            <a th:href="@{'/sessions/edit/' + ${sessionT.id}}">Editar</a>
-            <form th:action="@{'/sessions/start/' + ${sessionT.id}}" method="post" style="display: inline;">
+
+            <a th:if="${#strings.toUpperCase(sessionT.status.toString()) != 'FINALIZED'}"
+               th:href="@{'/sessions/edit/' + ${sessionT.id}}">Editar</a>
+
+            <form th:if="${sessionT.strategy != null}"
+                  th:action="@{'/strategies/' + ${sessionT.strategy.id}}"
+                  style="display: inline;">
+                <button type="submit">Ver Estratégia</button>
+            </form>
+
+            <form th:if="${#strings.toUpperCase(sessionT.status.toString()) == 'CREATED'}"
+                  th:action="@{'/sessions/start/' + ${sessionT.id}}" method="post" style="display: inline;">
                 <button type="submit">Iniciar Execução</button>
             </form>
             <form th:if="${#strings.toUpperCase(sessionT.status.toString()) == 'IN_EXECUTION'}"

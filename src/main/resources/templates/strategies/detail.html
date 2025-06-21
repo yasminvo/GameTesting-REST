@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Detalhes da Estratégia</title>
+</head>
+<body>
+<h1>Detalhes da Estratégia</h1>
+
+<p><strong>ID:</strong> <span th:text="${strategy.id}">-</span></p>
+<p><strong>Nome:</strong> <span th:text="${strategy.name != null ? strategy.name : 'Sem nome'}">-</span></p>
+<p><strong>Descrição:</strong> <span th:text="${strategy.description != null ? strategy.description : 'Sem descrição'}">-</span></p>
+
+<h2>Dicas</h2>
+<ul>
+    <li th:each="tip : ${strategy.tips}" th:text="${tip}">Dica</li>
+    <li th:if="${#lists.isEmpty(strategy.tips)}">Nenhuma dica disponível.</li>
+</ul>
+
+<h2>Exemplos</h2>
+<div th:if="${strategy.examples != null and !strategy.examples.isEmpty()}">
+    <div th:each="example : ${strategy.examples}">
+        <p><strong>Texto:</strong> <span th:text="${example.text}">Texto do exemplo</span></p>
+        <div th:if="${example.image != null}">
+            <p><strong>Imagem:</strong></p>
+            <img th:src="@{${example.image.filePath}}"
+                 th:alt="${example.image.altPath}"
+                 width="200" />
+        </div>
+        <hr/>
+    </div>
+</div>
+<p th:if="${strategy.examples == null or strategy.examples.isEmpty()}">Nenhum exemplo disponível.</p>
+
+<a th:href="@{/sessions/list}">Voltar</a>
+</body>
+</html>

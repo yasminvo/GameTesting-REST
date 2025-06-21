@@ -33,7 +33,7 @@ public class SessionController {
         this.strategyService = strategyService;
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('TESTER')")
     @GetMapping("/list")
     public String getAllSessions(Model model) {
         List<SessionResponseDTO> sessions = sessionService.listAll();
