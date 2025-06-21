@@ -1,0 +1,32 @@
+<!-- templates/sessions/edit.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Editar Sessão</title>
+</head>
+<body>
+<h1>Editar Sessão</h1>
+
+<form th:action="@{'/sessions/edit/' + ${sessionData.id}}" method="post">
+    <label for="strategyId">Nova Estratégia:</label>
+    <select name="strategyId" id="strategyId">
+        <option th:each="s : ${strategias}"
+                th:value="${s.id}"
+                th:text="${s.name}"
+                th:selected="${sessionData.strategy != null and s.id == sessionData.strategy.id}">Estratégia</option>
+    </select><br>
+
+    <label for="duration">Duração (min):</label>
+    <input type="number" id="duration" name="duration" th:value="${sessionData.duration}" required><br>
+
+    <label for="description">Descrição:</label>
+    <textarea id="description" name="description" rows="4" cols="50"
+              th:text="${sessionData.description}"></textarea><br>
+
+    <button type="submit">Salvar Alterações</button>
+</form>
+
+<a th:href="@{/sessions/list}">Voltar</a>
+</body>
+</html>

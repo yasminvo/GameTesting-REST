@@ -6,7 +6,7 @@
 </head>
 <body>
 <h1>Estratégias</h1>
-<div sec:authorize="hasRole('ADMIN') or hasRole('TESTER')">
+<div sec:authorize="hasRole('ADMIN')">
     <a th:href="@{/strategies/create}">Criar Nova Estratégia</a>
 </div>
 <table border="1" style="border-collapse: collapse; width: 100%;">
@@ -45,7 +45,7 @@
         </td>
 
         <!-- Ações -->
-        <div sec:authorize="hasRole('ADMIN') or hasRole('TESTER')">
+        <div sec:authorize="hasRole('ADMIN')">
             <td>
                 <a th:href="@{/strategies/edit/{id}(id=${strategy.id})}">Editar</a> |
                 <form th:action="@{/strategies/delete/{id}(id=${strategy.id})}" method="post" style="display:inline;">

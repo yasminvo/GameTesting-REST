@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Detalhes da Sessão</title>
+</head>
+<body>
+<h1>Detalhes da Sessão</h1>
+
+<p><strong>ID:</strong> <span th:text="${sessionData.id}">-</span></p>
+
+<p><strong>Projeto:</strong>
+    <span th:text="${sessionData.projeto != null ? sessionData.projeto.name : 'Sem projeto'}">-</span>
+</p>
+
+<p><strong>Estratégia:</strong>
+    <span th:text="${sessionData.strategy != null ? sessionData.strategy.name : 'Sem estratégia'}">-</span>
+</p>
+
+<p><strong>Tester:</strong>
+    <span th:text="${sessionData.tester != null ? sessionData.tester.name : 'Sem tester'}">-</span>
+</p>
+
+<p><strong>Duração:</strong> <span th:text="${sessionData.duration != null ? sessionData.duration : '-'}"></span> min</p>
+
+<p><strong>Status:</strong> <span th:text="${sessionData.status != null ? sessionData.status : '-'}"></span></p>
+
+<p><strong>Descrição:</strong> <span th:text="${sessionData.description != null ? sessionData.description : '-'}"></span></p>
+
+<a th:href="@{/sessions/list}">Voltar</a>
+</body>
+</html>

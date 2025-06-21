@@ -1,0 +1,46 @@
+<!-- templates/sessions/list.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Sessões</title>
+</head>
+<body>
+<h1>Lista de Sessões</h1>
+<a th:href="@{/sessions/create}">Criar Nova Sessão</a>
+<table border="1">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Projeto</th>
+        <th>Estrategia</th>
+        <th>Tester</th>
+        <th>Duração</th>
+        <th>Status</th>
+        <th>Ações</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="sessionT : ${sessions}">
+        <td th:text="${sessionT.id}"></td>
+        <td th:text="${sessionT.projeto.name}"></td>
+        <td th:text="${sessionT.strategy != null ? sessionT.strategy.name : 'Sem estratégia'}"></td>
+        <td th:text="${sessionT.tester.name}"></td>
+        <td th:text="${sessionT.duration}"></td>
+        <td th:text="${sessionT.status}"></td>
+        <td>
+            <a th:href="@{'/sessions/' + ${sessionT.id}}">Detalhes</a>
+            <a th:href="@{'/sessions/edit/' + ${sessionT.id}}">Editar</a>
+            <form th:action="@{'/sessions/start/' + ${sessionT.id}}" method="post" style="display: inline;">
+                <button type="submit">Iniciar Execução</button>
+            </form>
+            <form th:if="${sessionT.status == 'IN_EXECUTION'}"
+                  th:action="@{'/sessions/start/' + ${sessionT.id}}" method="post" style="display: inline;">
+                <button type="submit">Reportar Bugs</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

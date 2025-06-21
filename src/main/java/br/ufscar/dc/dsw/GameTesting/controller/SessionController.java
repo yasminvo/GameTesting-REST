@@ -1,93 +1,121 @@
 package br.ufscar.dc.dsw.GameTesting.controller;
 
-import br.ufscar.dc.dsw.GameTesting.dtos.SessionCreateDTO;
-import br.ufscar.dc.dsw.GameTesting.dtos.SessionResponseDTO;
-import br.ufscar.dc.dsw.GameTesting.model.Session;
+import br.ufscar.dc.dsw.GameTesting.dtos.*;
+import br.ufscar.dc.dsw.GameTesting.exceptions.AppException;
+import br.ufscar.dc.dsw.GameTesting.service.ProjetoService;
 import br.ufscar.dc.dsw.GameTesting.service.SessionService;
+import br.ufscar.dc.dsw.GameTesting.service.StrategyService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.net.URI;
 import java.nio.file.AccessDeniedException;
-import java.security.Principal;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
-@RestController
+@Controller
 @RequestMapping("/sessions")
 public class SessionController {
 
     private final SessionService sessionService;
+    private final ProjetoService projetoService;
+    private final StrategyService strategyService;
+
     @Autowired
-    public SessionController(SessionService sessionService) {
+    public SessionController(SessionService sessionService,
+                             ProjetoService projetoService,
+                             StrategyService strategyService) {
         this.sessionService = sessionService;
+        this.projetoService = projetoService;
+        this.strategyService = strategyService;
     }
 
-    @GetMapping("")
-    @PreAuthorize("hasRole('ADMIN')")    // TESTED - OK
-    public ResponseEntity<?> getAllSessions() {
-        List<SessionResponseDTO> response = sessionService.listAll();
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/list")
+    public String getAllSessions(Model model) {
+        List<SessionResponseDTO> sessions = sessionService.listAll();
+        model.addAttribute("sessions", sessions);
+        return "sessions/list"; // templates/sessions/list.html
     }
 
+    @PreAuthorize("hasRole('ADMIN') or hasRole('TESTER')")
     @GetMapping("/{sessionId}")
-    @PreAuthorize("hasRole('TESTER') or hasRole('ADMIN')")  // TESTED - OK
-    public ResponseEntity<?> getSessionById(@PathVariable Long sessionId) {
-
-        SessionResponseDTO responseDTO = sessionService.findSessionById(sessionId);
-        return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
+    public String getSessionById(@PathVariable Long sessionId, Model model) {
+        SessionResponseDTO session = sessionService.findSessionById(sessionId);
+        System.out.println("DEBUG session = " + session);
+        model.addAttribute("sessionData", session);
+        return "sessions/details"; // templates/sessions/details.html
     }
 
-    @GetMapping("/project/{projectId}") // TESTED - OK
-    @PreAuthorize("hasRole('TESTER') or hasRole('ADMIN')")
-    public ResponseEntity<?> getSessionsByProject(@PathVariable Long projectId) {
-        List<SessionResponseDTO> responseDTOs = sessionService.findSessionsByProjectId(projectId);
-        return ResponseEntity.ok(responseDTOs);
+    @PreAuthorize("hasRole('ADMIN') or hasRole('TESTER')")
+    @GetMapping("/create")
+    public String showCreateForm(Model model) {
+        List<ProjetoDTO> projetos = projetoService.listAllSorted("name");
+        List<StrategyResponseDTO> estrategias = strategyService.findAll();
+
+        model.addAttribute("projetos", projetos);
+        model.addAttribute("strategias", estrategias);
+        model.addAttribute("session", new SessionCreateDTO());
+        return "sessions/create"; // templates/sessions/create.html
     }
 
-    @PostMapping("")
-    @PreAuthorize("hasRole('TESTER') or hasRole('ADMIN')") // TESTED - OK
-    public ResponseEntity createSession(@RequestBody SessionCreateDTO createDTO) {
-        Session novaSessao = sessionService.createSession(createDTO);
-        SessionResponseDTO responseDTO = SessionResponseDTO.fromEntity(novaSessao);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
+    @PreAuthorize("hasRole('ADMIN') or hasRole('TESTER')")
+    @PostMapping("/create")
+    public String createSession(@ModelAttribute("session") SessionCreateDTO createDTO, Model model) {
+        sessionService.createSession(createDTO);
+        return "redirect:/sessions/list";
     }
 
-    @PreAuthorize("hasRole('TESTER') or hasRole('ADMIN')") // TESTED - OK
-    @PostMapping("/{sessionId}/start")
-    public ResponseEntity<?> startSession(@PathVariable Long sessionId) {
+    @PreAuthorize("hasRole('ADMIN') or hasRole('TESTER')")
+    @GetMapping("/edit/{id}")
+    public String showEditForm(@PathVariable Long id, Model model) {
+        SessionResponseDTO session = sessionService.findSessionById(id);
+        List<StrategyResponseDTO> estrategias = strategyService.findAll();
+
+        model.addAttribute("sessionData", session);
+        model.addAttribute("strategias", estrategias);
+        model.addAttribute("sessionUpdate", new SessionUpdateDTO());
+        return "sessions/edit"; // templates/sessions/edit.html
+    }
+
+    @PreAuthorize("hasRole('ADMIN') or hasRole('TESTER')")
+    @PostMapping("/edit/{id}")
+    public String updateSession(@PathVariable Long id, @ModelAttribute("sessionUpdate") SessionUpdateDTO updateDTO) {
+        sessionService.updateSession(id, updateDTO);
+        return "redirect:/sessions/list";
+    }
+
+
+    @PreAuthorize("hasRole('ADMIN') or hasRole('TESTER')")
+    @PostMapping("/start/{id}")
+    public String startSession(@PathVariable Long id) {
         try {
-            Session updatedSession = sessionService.startSession(sessionId);
-            return ResponseEntity.ok(SessionResponseDTO.fromEntity(updatedSession));
+            sessionService.startSession(id);
+            return "redirect:/sessions/list" ;
         } catch (AccessDeniedException e) {
-            return ResponseEntity.status(403).body(e.getMessage());
+            throw new AppException("Acesso negado ao iniciar sessão.", HttpStatus.FORBIDDEN);
         } catch (IllegalStateException e) {
-            return ResponseEntity.status(409).body(e.getMessage());
+            throw new AppException(e.getMessage(), HttpStatus.CONFLICT);
         } catch (EntityNotFoundException e) {
-            return ResponseEntity.status(404).body(e.getMessage());
+            throw new AppException(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN') or hasRole('TESTER')")
     @PostMapping("/{id}/finalize")
-    @PreAuthorize("hasRole('TESTER') or hasRole('ADMIN')") // TESTED - OK
-    public ResponseEntity<?> finalizeSession(@PathVariable Long id) {
+    public String finalizeSession(@PathVariable Long id) {
         try {
-            Session updatedSession = sessionService.finalizeSession(id);
-            return ResponseEntity.ok(SessionResponseDTO.fromEntity(updatedSession));
+            sessionService.finalizeSession(id);
+            return "redirect:/sessions/" + id;
         } catch (AccessDeniedException e) {
-            return ResponseEntity.status(403).body(e.getMessage());
+            throw new AppException("Acesso negado ao finalizar sessão.", HttpStatus.FORBIDDEN);
         } catch (IllegalStateException e) {
-            return ResponseEntity.status(409).body(e.getMessage());
+            throw new AppException(e.getMessage(), HttpStatus.CONFLICT);
         } catch (EntityNotFoundException e) {
-            return ResponseEntity.status(404).body(e.getMessage());
+            throw new AppException(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
-
 }

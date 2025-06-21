@@ -2,7 +2,7 @@ package br.ufscar.dc.dsw.GameTesting.service;
 
 import br.ufscar.dc.dsw.GameTesting.dtos.SessionCreateDTO;
 import br.ufscar.dc.dsw.GameTesting.dtos.SessionResponseDTO;
-import br.ufscar.dc.dsw.GameTesting.enums.Role;
+import br.ufscar.dc.dsw.GameTesting.dtos.SessionUpdateDTO;
 import br.ufscar.dc.dsw.GameTesting.enums.Status;
 import br.ufscar.dc.dsw.GameTesting.model.Projeto;
 import br.ufscar.dc.dsw.GameTesting.model.Session;
@@ -17,10 +17,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.file.AccessDeniedException;
-import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -68,7 +66,7 @@ public class SessionService {
         Projeto projeto = projetoRepository.findById(sessionCreateDTO.getProjectId())
                 .orElseThrow(() -> new EntityNotFoundException("Project not found"));
         Strategy strategy = strategyRepository.findById(sessionCreateDTO.getStrategyId())
-              .orElseThrow(() -> new EntityNotFoundException("Strategy not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Strategy not found"));
 
         Session session = new Session();
         session.setTester(tester);
@@ -115,6 +113,33 @@ public class SessionService {
 
         return SessionResponseDTO.fromEntity(session);
 
+    }
+
+    public SessionResponseDTO updateSession(Long sessionId, SessionUpdateDTO sessionUpdateDTO) {
+        Session session = sessionRepository.findById(sessionId)
+                .orElseThrow(()-> new EntityNotFoundException("sessão não encontrada"));
+
+        if (session.getStatus() == Status.FINALIZED) {
+            throw new IllegalStateException("sessão já finalizada");
+        }
+
+        if (sessionUpdateDTO.getDescription() != null) {
+            session.setDescription(sessionUpdateDTO.getDescription());
+        }
+
+        if (sessionUpdateDTO.getDuration() != null) {
+            session.setDuration(sessionUpdateDTO.getDuration());
+        }
+
+        if (sessionUpdateDTO.getStrategyId() != null) {
+            Strategy newStrategy = strategyRepository.findById(sessionUpdateDTO.getStrategyId())
+                    .orElseThrow(() -> new EntityNotFoundException("estratégia não encontrada"));
+
+            session.setStrategy(newStrategy);
+        }
+        Session sessaoNova = sessionRepository.save(session);
+
+        return SessionResponseDTO.fromEntity(sessaoNova);
     }
 
 }

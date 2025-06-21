@@ -1,0 +1,36 @@
+<!-- templates/sessions/create.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Criar Sessão</title>
+</head>
+<body>
+<h1>Criar Nova Sessão</h1>
+
+<form th:action="@{/sessions/create}" method="post">
+    <label for="projectId">Projeto:</label>
+    <select name="projectId" id="projectId" required>
+        <option th:each="p : ${projetos}" th:value="${p.id}" th:text="${p.name}">Projeto</option>
+    </select><br>
+
+    <label for="strategyId">Estratégia:</label>
+    <select name="strategyId" id="strategyId" required>
+        <option th:each="s : ${strategias}" th:value="${s.id}" th:text="${s.name}">Estratégia</option>
+    </select><br>
+
+    <label for="testerEmail">Tester (e-mail):</label>
+    <input type="email" id="testerEmail" name="testerEmail" required><br>
+
+    <label for="duration">Duração (min):</label>
+    <input type="number" id="duration" name="duration" required><br>
+
+    <label for="description">Descrição:</label>
+    <textarea id="description" name="description" rows="4" cols="50"></textarea><br>
+
+    <button type="submit">Criar Sessão</button>
+</form>
+
+<a th:href="@{/sessions}">Voltar</a>
+</body>
+</html>

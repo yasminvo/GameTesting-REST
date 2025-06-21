@@ -31,7 +31,7 @@ public class SessionResponseDTO{
                 session.getId(),
                 UserDTO.fromEntity(session.getTester()),
                 ProjetoDTO.fromEntity(session.getProjeto()),
-                StrategyResponseDTO.fromEntity(session.getStrategy()),
+                session.getStrategy() != null ? StrategyResponseDTO.fromEntity(session.getStrategy()) : null,
                 session.getDuration(),
                 session.getDescription(),
                 session.getStatus(),
