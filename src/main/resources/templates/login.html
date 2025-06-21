@@ -16,6 +16,10 @@
     <button type="submit">Entrar</button>
 </form>
 
+<form th:action="@{/strategies/list}" method="get" style="margin-top: 20px;">
+    <button type="submit">Entrar como visitante</button>
+</form>
+
 <p th:if="${error}" th:text="${error}" style="color:red"></p>
 <p th:if="${msg}" th:text="${msg}" style="color:green"></p>
 </body>

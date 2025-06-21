@@ -1,5 +1,6 @@
 package br.ufscar.dc.dsw.GameTesting.dtos;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import br.ufscar.dc.dsw.GameTesting.model.Example;
@@ -18,8 +19,8 @@ public class CreateStrategyDTO {
     private Long id;
     private String name;
     private String description;
-    private List<ExampleDTO> examples;
-    private List<String> tips;
+    private List<ExampleDTO> examples = new ArrayList<>();
+    private List<String> tips = new ArrayList<>();
 
     public static CreateStrategyDTO fromEntity(Strategy strategy) {
         return new CreateStrategyDTO(

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8" />
+    <title>Lista de Estratégias</title>
+</head>
+<body>
+<h1>Estratégias</h1>
+<div sec:authorize="hasRole('ADMIN') or hasRole('TESTER')">
+    <a th:href="@{/strategies/create}">Criar Nova Estratégia</a>
+</div>
+<table border="1" style="border-collapse: collapse; width: 100%;">
+    <thead>
+    <tr>
+        <th>Nome</th>
+        <th>Descrição</th>
+        <th>Dicas</th>
+        <th>Exemplos</th>
+        <th>Ações</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="strategy : ${strategies}">
+        <td th:text="${strategy.name}">Nome</td>
+        <td th:text="${strategy.description}">Descrição</td>
+
+        <!-- Mostrar Dicas -->
+        <td>
+            <ul>
+                <li th:each="tip : ${strategy.tips}" th:text="${tip}">Dica</li>
+            </ul>
+        </td>
+
+        <!-- Mostrar Exemplos + Imagem -->
+        <td>
+            <div th:each="example : ${strategy.examples}">
+                <p><strong>Texto:</strong> <span th:text="${example.text}">Texto do exemplo</span></p>
+                <div>
+                    <strong>Imagem:</strong>
+                    <span th:text="${example.image.filePath}">Caminho da imagem</span><br/>
+                    <img th:src="@{${example.image.filePath}}" th:alt="${example.image.altPath}" style="max-width: 150px; max-height: 150px;" />
+                </div>
+                <hr/>
+            </div>
+        </td>
+
+        <!-- Ações -->
+        <div sec:authorize="hasRole('ADMIN') or hasRole('TESTER')">
+            <td>
+                <a th:href="@{/strategies/edit/{id}(id=${strategy.id})}">Editar</a> |
+                <form th:action="@{/strategies/delete/{id}(id=${strategy.id})}" method="post" style="display:inline;">
+                    <button type="submit" onclick="return confirm('Deseja realmente deletar esta estratégia?');">Deletar</button>
+                </form>
+            </td>
+        </div>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

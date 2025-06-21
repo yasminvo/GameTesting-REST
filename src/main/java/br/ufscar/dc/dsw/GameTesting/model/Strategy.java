@@ -1,17 +1,6 @@
 package br.ufscar.dc.dsw.GameTesting.model;
 
-import jakarta.persistence.CollectionTable;
-import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
-import jakarta.persistence.CascadeType; // Import para CascadeType
+import jakarta.persistence.*;
 import com.fasterxml.jackson.annotation.JsonIgnore; // Import para serialização JSON
 
 import java.util.ArrayList;
@@ -39,9 +28,9 @@ public class Strategy {
     @Column(name = "tip")
     private List<String> tips = new ArrayList<>();
 
-    @OneToOne(mappedBy = "strategy")
+    @OneToMany(mappedBy = "strategy", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
-    private Session session;
+    private List<Session> sessions = new ArrayList<>();
 
     public Strategy() {
     }
@@ -62,8 +51,8 @@ public class Strategy {
     public void setExamples(List<Example> examples) { this.examples = examples; }
     public List<String> getTips() { return tips; }
     public void setTips(List<String> tips) { this.tips = tips; }
-    public Session getSession() { return session; }
-    public void setSession(Session session) { this.session = session; }
+    public List<Session> getSession() { return sessions; }
+    public void setSession(List<Session> sessions) { this.sessions = sessions; }
 
     @Override
     public String toString() {

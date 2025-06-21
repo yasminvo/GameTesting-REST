@@ -26,14 +26,14 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable()) // para ambiente local
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/login", "/auth/**", "/css/**", "/js/**", "/images/**", "/favicon.ico"
+                                "/login", "/auth/**", "/css/**", "/js/**", "/images/**", "/favicon.ico", "strategies/list"
                         ).permitAll()
                         .requestMatchers("/users/**").hasAnyRole("ADMIN", "TESTER")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
-                        .loginProcessingUrl("/login") // POST /login será tratado automaticamente
+                        .loginProcessingUrl("/login")
                         .defaultSuccessUrl("/users/redirect", true)
                         .permitAll()
                 )

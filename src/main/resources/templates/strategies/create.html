@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Criar Estratégia</title>
+</head>
+<body>
+<h1>Criar Nova Estratégia</h1>
+
+<form th:action="@{/strategies/create}" th:object="${strategy}" method="post">
+
+    <!-- Nome -->
+    <label for="name">Nome:</label>
+    <input id="name" type="text" th:field="*{name}" required />
+    <br/>
+
+    <!-- Descrição -->
+    <label for="description">Descrição:</label>
+    <textarea id="description" th:field="*{description}" required></textarea>
+    <br/>
+
+    <!-- Dicas -->
+    <h3>Dicas</h3>
+    <div id="tips-container">
+        <div th:each="tip, i : *{tips}">
+            <input type="text" th:field="*{tips[__${i.index}__]}" />
+            <button type="button" onclick="this.parentElement.remove()">Remover</button>
+        </div>
+    </div>
+    <button type="button" onclick="addTip()">Adicionar Dica</button>
+
+    <!-- Exemplos -->
+    <h3>Exemplos</h3>
+    <div id="examples-container">
+        <div th:each="example, i : *{examples}">
+            <label>Texto:</label>
+            <input type="text" th:field="*{examples[__${i.index}__].text}" />
+            <br/>
+            <label>Imagem (filePath):</label>
+            <input type="text" th:field="*{examples[__${i.index}__].image.filePath}" />
+            <br/>
+            <label>AltPath:</label>
+            <input type="text" th:field="*{examples[__${i.index}__].image.altPath}" />
+            <button type="button" onclick="this.parentElement.remove()">Remover</button>
+            <hr/>
+        </div>
+    </div>
+    <button type="button" onclick="addExample()">Adicionar Exemplo</button>
+
+    <br/><br/>
+    <button type="submit">Salvar Estratégia</button>
+</form>
+
+<a th:href="@{/strategies/list}">Cancelar</a>
+
+<!-- Scripts para adicionar dinamicamente -->
+<script>
+    function addTip() {
+        const container = document.getElementById("tips-container");
+        const index = container.children.length;
+        const div = document.createElement("div");
+        div.innerHTML = `
+            <input type="text" name="tips[${index}]" />
+            <button type="button" onclick="this.parentElement.remove()">Remover</button>
+        `;
+        container.appendChild(div);
+    }
+
+    function addExample() {
+        const container = document.getElementById("examples-container");
+        const index = container.children.length;
+        const div = document.createElement("div");
+        div.innerHTML = `
+            <label>Texto:</label>
+            <input type="text" name="examples[${index}].text" /><br/>
+            <label>Imagem (filePath):</label>
+            <input type="text" name="examples[${index}].image.filePath" /><br/>
+            <label>AltPath:</label>
+            <input type="text" name="examples[${index}].image.altPath" />
+            <button type="button" onclick="this.parentElement.remove()">Remover</button>
+            <hr/>
+        `;
+        container.appendChild(div);
+    }
+</script>
+</body>
+</html>

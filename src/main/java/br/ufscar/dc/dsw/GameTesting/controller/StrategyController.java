@@ -15,11 +15,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
+@Controller
 @RequestMapping("/strategies")
 public class StrategyController {
 
@@ -36,47 +38,50 @@ public class StrategyController {
         this.imageService = imageService;
     }
 
-    @PostMapping("")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('TESTER')")  // TESTED - OK
-    public ResponseEntity<?> createStrategy(@RequestBody CreateStrategyDTO strategyDTO) {
-        Strategy savedStrategy = strategyService.save(strategyDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedStrategy);
-    }
-
-    @GetMapping("")    // TESTED - OK
-    public ResponseEntity<?> getAllStrategies() {
-        List<StrategyResponseDTO> responseDTO = strategyService.findAll();
-        return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
-    }
-
-    @GetMapping("/{id}")   // TESTED - OK
     @PreAuthorize("hasRole('ADMIN') or hasRole('TESTER')")
-    public ResponseEntity<?> getStrategyById(@PathVariable Long id) {
-        StrategyResponseDTO responseDTO = strategyService.findById(id);
-        return  ResponseEntity.status(HttpStatus.OK).body(responseDTO);
+    @GetMapping("/create")
+    public String showCreateForm(Model model) {
+        model.addAttribute("strategy", new CreateStrategyDTO());
+        return "strategies/create"; // templates/strategies/create.html
     }
 
-    @PutMapping("/{id}") // TESTED - OK
     @PreAuthorize("hasRole('ADMIN') or hasRole('TESTER')")
-    public ResponseEntity<?> updateStrategy(@PathVariable Long id, @RequestBody CreateStrategyDTO dto) {
-        try {
-            StrategyResponseDTO updated = strategyService.update(id, dto);
-            return ResponseEntity.ok(updated);
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+    @PostMapping("/create")
+    public String createStrategy(@ModelAttribute("strategy") CreateStrategyDTO strategyDTO) {
+        strategyService.save(strategyDTO);
+        return "redirect:/strategies/list";
     }
 
-    @DeleteMapping("/{id}")  // TESTED - OK
-    @PreAuthorize("hasRole('ADMIN') or hasRole('TESTER')")
-    public ResponseEntity<Void> deleteStrategy(@PathVariable Long id) {
-        try {
-            strategyService.delete(id);
-            return ResponseEntity.noContent().build();
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+    @GetMapping("/list")
+    public String listStrategies(Model model) {
+        List<StrategyResponseDTO> strategies = strategyService.findAll();
+        model.addAttribute("strategies", strategies);
+        return "strategies/list"; // templates/strategies/list.html
     }
+
+    @PreAuthorize("hasRole('ADMIN') or hasRole('TESTER')")
+    @GetMapping("/edit/{id}")
+    public String showEditForm(@PathVariable Long id, Model model) {
+        StrategyResponseDTO strategy = strategyService.findById(id);
+        model.addAttribute("strategy", strategy);
+        return "strategies/edit"; // templates/strategies/edit.html
+    }
+
+    @PreAuthorize("hasRole('ADMIN') or hasRole('TESTER')")
+    @PostMapping("/edit/{id}")
+    public String updateStrategy(@PathVariable Long id,
+                                 @ModelAttribute("strategy") CreateStrategyDTO dto) {
+        strategyService.update(id, dto);
+        return "redirect:/strategies/list";
+    }
+
+    @PreAuthorize("hasRole('ADMIN') or hasRole('TESTER')")
+    @PostMapping("/delete/{id}")
+    public String deleteStrategy(@PathVariable Long id) {
+        strategyService.delete(id);
+        return "redirect:/strategies/list";
+    }
+
 
     @PostMapping("/examples/{strategyId}") // TESTED - OK
     @PreAuthorize("hasRole('ADMIN') or hasRole('TESTER')")
