@@ -31,7 +31,13 @@
         <td>
             <a th:href="@{'/sessions/' + ${sessionT.id}}">Detalhes</a>
 
-            <a th:if="${#strings.toUpperCase(sessionT.status.toString()) != 'FINALIZED'}"
+            <!-- ADMIN pode editar sempre -->
+            <a sec:authorize="hasRole('ADMIN')"
+               th:href="@{'/sessions/edit/' + ${sessionT.id}}">Editar</a>
+
+            <!-- TESTER pode editar apenas se não estiver FINALIZED -->
+            <a sec:authorize="hasRole('TESTER')"
+               th:if="${#strings.toUpperCase(sessionT.status.toString()) != 'FINALIZED'}"
                th:href="@{'/sessions/edit/' + ${sessionT.id}}">Editar</a>
 
             <form th:if="${sessionT.strategy != null}"
