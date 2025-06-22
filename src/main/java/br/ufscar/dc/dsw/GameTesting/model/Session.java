@@ -47,6 +47,9 @@ public class Session {
     @Column(name = "status_changed_at")
     private List<LocalDateTime> statusChangedTime = new ArrayList<>();
 
+    @OneToMany(mappedBy = "session", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Bug> bugs = new ArrayList<>();
+
     public Session() {
     }
 
@@ -120,5 +123,12 @@ public class Session {
 
     public void setStatusChangedTime(List<LocalDateTime> statusChangedTime) {
         this.statusChangedTime = statusChangedTime;
+    }
+    public List<Bug> getBugs() {
+        return bugs;
+    }
+
+    public void setBugs(List<Bug> bugs) {
+        this.bugs = bugs;
     }
 }

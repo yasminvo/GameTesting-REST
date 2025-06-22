@@ -51,8 +51,12 @@
                 <button type="submit">Iniciar Execução</button>
             </form>
             <form th:if="${#strings.toUpperCase(sessionT.status.toString()) == 'IN_EXECUTION'}"
-                  th:action="@{'/sessions/start/' + ${sessionT.id}}" method="post" style="display: inline;">
-                <button type="submit">Reportar Bugs</button>
+                  th:action="@{'/sessions/bugs-report/' + ${sessionT.id}}" method="get" style="display: inline;">
+                <button type="submit">Reportar Bug</button>
+            </form>
+            <form th:if="${#strings.toUpperCase(sessionT.status.toString()) != 'CREATED'}"
+                  th:action="@{'/sessions/bugs-list/' + ${sessionT.id}}" method="get" style="display: inline;">
+                <button type="submit">Ver Bugs</button>
             </form>
         </td>
     </tr>

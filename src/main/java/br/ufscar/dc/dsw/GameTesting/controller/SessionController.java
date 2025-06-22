@@ -14,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.nio.file.AccessDeniedException;
+import java.security.Principal;
 import java.util.List;
 
 @Controller
@@ -83,8 +84,8 @@ public class SessionController {
 
     @PreAuthorize("hasRole('ADMIN') or hasRole('TESTER')")
     @PostMapping("/edit/{id}")
-    public String updateSession(@PathVariable Long id, @ModelAttribute("sessionUpdate") SessionUpdateDTO updateDTO) {
-        sessionService.updateSession(id, updateDTO);
+    public String updateSession(@PathVariable Long id, @ModelAttribute("sessionUpdate") SessionUpdateDTO updateDTO, Principal principal) {
+        sessionService.updateSession(id, updateDTO, principal);
         return "redirect:/sessions/list";
     }
 
@@ -117,5 +118,25 @@ public class SessionController {
         } catch (EntityNotFoundException e) {
             throw new AppException(e.getMessage(), HttpStatus.NOT_FOUND);
         }
+    }
+
+    @GetMapping("/bugs-report/{sessionId}")
+    public String showBugForm(@PathVariable Long sessionId, Model model) {
+        model.addAttribute("bug", new BugDTO());
+        model.addAttribute("sessionId", sessionId);
+        return "sessions/bugs-report";
+    }
+
+    @PostMapping("/bugs-report/{sessionId}")
+    public String submitBug(@PathVariable Long sessionId, @ModelAttribute("bug") BugDTO bugDto) {
+        sessionService.reportBug(sessionId, bugDto);
+        return "redirect:/sessions/list";
+    }
+
+    @GetMapping("/bugs-list/{sessionId}")
+    public String listBugsBySession(@PathVariable Long sessionId, Model model) {
+        List<BugDTO> bugs = sessionService.findBugsBySession(sessionId);
+        model.addAttribute("bugs", bugs);
+        return "sessions/bugs-list"; // templates/bugs/list.html
     }
 }
