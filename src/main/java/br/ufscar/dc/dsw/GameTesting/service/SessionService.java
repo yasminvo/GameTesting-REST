@@ -12,6 +12,7 @@ import br.ufscar.dc.dsw.GameTesting.repository.*;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,6 +50,26 @@ public class SessionService {
         return sessions.stream()
                 .map(SessionResponseDTO::fromEntity)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<SessionResponseDTO> listByRole(Authentication authentication) {
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+
+        if (isAdmin) {
+            return listAll();
+        }
+        else {
+            String email = authentication.getName();
+            User tester = userRepository.findByEmail(email)
+                    .orElseThrow(() -> new EntityNotFoundException("User not found"));
+            List<Session> sessions = sessionRepository.findByTester(tester);
+
+            return sessions.stream()
+                    .map(SessionResponseDTO::fromEntity)
+                    .collect(Collectors.toList());
+        }
     }
 
 
@@ -92,6 +113,7 @@ public class SessionService {
             throw new IllegalStateException("A sessão não pode ser inicializada");
         }
         session.setStatus(Status.IN_EXECUTION);
+        session.setStartTime(LocalDateTime.now());
         session.getStatusChangedTime().add(LocalDateTime.now());
 
         return sessionRepository.save(session);
@@ -162,7 +184,7 @@ public class SessionService {
 
         for (Session session : runningSessions) {
 
-            LocalDateTime startTime = session.getStatusChangedTime().get(session.getStatusChangedTime().size() - 1);
+            LocalDateTime startTime = session.getStartTime();
             LocalDateTime expectedEndTime = startTime.plusMinutes(session.getDuration());
 
             if (LocalDateTime.now().isAfter(expectedEndTime)) {

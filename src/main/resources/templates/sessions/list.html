@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Lista de Sessões</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}">
 </head>
 <body>
 <h1>Lista de Sessões</h1>
@@ -58,6 +59,14 @@
                   th:action="@{'/sessions/bugs-list/' + ${sessionT.id}}" method="get" style="display: inline;">
                 <button type="submit">Ver Bugs</button>
             </form>
+
+            <form th:if="${#strings.toUpperCase(sessionT.status.toString()) == 'IN_EXECUTION' and
+                          sessionT.startTime != null and
+                          #temporals.createNow().isAfter(sessionT.startTime.plusMinutes(sessionT.duration))}"
+                  th:action="@{'/sessions/' + ${sessionT.id} + '/finalize'}" method="post" style="display: inline;">
+                <button type="submit">Finalizar Sessão</button>
+            </form>
+
         </td>
     </tr>
     </tbody>

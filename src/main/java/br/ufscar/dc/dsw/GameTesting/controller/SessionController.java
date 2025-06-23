@@ -9,6 +9,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -36,8 +37,8 @@ public class SessionController {
 
     @PreAuthorize("hasRole('ADMIN') or hasRole('TESTER')")
     @GetMapping("/list")
-    public String getAllSessions(Model model) {
-        List<SessionResponseDTO> sessions = sessionService.listAll();
+    public String getAllSessions(Model model, Authentication authentication) {
+        List<SessionResponseDTO> sessions = sessionService.listByRole(authentication);
         model.addAttribute("sessions", sessions);
         return "sessions/list"; // templates/sessions/list.html
     }

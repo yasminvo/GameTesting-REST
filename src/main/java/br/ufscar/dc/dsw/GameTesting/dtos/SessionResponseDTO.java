@@ -25,6 +25,7 @@ public class SessionResponseDTO{
     private String description;
     private Status status;
     private List<LocalDateTime> statusChangedTime;
+    private LocalDateTime startTime;
 
     public static SessionResponseDTO fromEntity(Session session) {
         return new SessionResponseDTO(
@@ -35,7 +36,8 @@ public class SessionResponseDTO{
                 session.getDuration(),
                 session.getDescription(),
                 session.getStatus(),
-                session.getStatusChangedTime()
+                session.getStatusChangedTime(),
+                session.getStartTime()
         );
     }
 
