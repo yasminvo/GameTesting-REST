@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <title th:text="#{common.title.create(${module.session})}">Criar Sessão</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}">
 </head>
 <body>
 <h1 th:text="#{sessions.create.header}">Criar Nova Sessão</h1>
-
+<div class="content-card">
 <form th:action="@{/sessions/create}" method="post">
     <label for="projectId" th:text="#{common.label.project}">Projeto:</label>
     <select name="projectId" id="projectId" required>
@@ -31,5 +32,6 @@
 </form>
 
 <a th:href="@{/sessions}" th:text="#{common.action.back}">Voltar</a>
+</div>
 </body>
 </html>

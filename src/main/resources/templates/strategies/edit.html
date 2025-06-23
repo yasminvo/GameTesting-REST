@@ -6,7 +6,7 @@
 </head>
 <body>
 <h1 th:text="#{common.header.edit(${module.strategy})}">Editar Estratégia</h1>
-
+<div class="content-card">
 <form th:action="@{/strategies/edit/{id}(id=${strategy.id})}" th:object="${strategy}" method="post">
 
     <label for="name" th:text="#{common.label.name}">Nome:</label>
@@ -80,5 +80,6 @@
     }
     /*]]>*/
 </script>
+</div>
 </body>
 </html>

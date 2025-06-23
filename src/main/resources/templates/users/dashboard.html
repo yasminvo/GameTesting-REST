@@ -2,19 +2,17 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
 <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Título da aba do navegador -->
     <title th:text="#{dashboard.admin.title_full}">Dashboard - Sistema (Admin)</title>
-    <link rel="stylesheet" href="/css/styles.css" />
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}">
 </head>
-<body>
-<header>
-    <h1 th:text="#{common.header.dashboard}">Dashboard</h1>
-    <form th:action="@{/logout}" method="post" style="display:inline;">
-        <button type="submit" th:text="#{common.action.logout}">Sair</button>
-    </form>
-</header>
+<body class="dashboard-page">
 
-<nav>
+<nav class="dashboard-nav">
+    <h2 th:text="#{dashboard.nav.title}">Navegação</h2>
     <ul>
+        <!-- Links de navegação usando as chaves i18n -->
         <li><a th:href="@{/users/list}" th:text="#{dashboard.nav.list_users}">Listar usuários</a></li>
         <li><a th:href="@{/users/create-tester}" th:text="#{dashboard.nav.register_tester}">Cadastrar Tester</a></li>
         <li><a th:href="@{/users/create-admin}" th:text="#{dashboard.nav.register_admin}">Cadastrar Admin</a></li>
@@ -24,10 +22,28 @@
     </ul>
 </nav>
 
-<main>
-    <p th:text="#{common.welcome_message}">Bem-vindo ao painel administrativo.</p>
+<!-- Conteúdo Principal à Direita -->
+<div class="dashboard-main-content">
 
+    <!-- Cabeçalho do conteúdo principal -->
+    <header class="dashboard-header">
+        <!-- O <h1> visível na página -->
+        <h1 th:text="#{common.header.dashboard}">Dashboard</h1>
+        <form th:action="@{/logout}" method="post">
+            <button type="submit" class="btn-secondary-action" th:text="#{common.action.logout}">Sair</button>
+        </form>
+    </header>
 
-</main>
+    <main>
+        <div class="content-card">
+
+            <h2 th:text="#{dashboard.admin.welcome_title}">Bem-vindo ao Painel Administrativo</h2>
+            <p th:text="#{dashboard.admin.welcome_message}">
+                Utilize o menu à esquerda para navegar entre as funcionalidades do sistema. Aqui você pode gerenciar usuários, projetos, estratégias de teste e muito mais.
+            </p>
+        </div>
+    </main>
+</div>
+
 </body>
 </html>

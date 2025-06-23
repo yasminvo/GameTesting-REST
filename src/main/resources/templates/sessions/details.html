@@ -3,30 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <title th:text="#{common.title.details(${module.session})}">Detalhes da Sessão</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}">
 </head>
 <body>
-<h1 th:text="#{common.header.details(${module.session})}">Detalhes da Sessão</h1>
+<div class="content-card">
+    <h1 th:text="#{common.header.details(${module.session})}">Detalhes da Sessão</h1>
 
-<p><strong th:text="#{common.label.id}">ID:</strong> <span th:text="${sessionData.id}">-</span></p>
+    <p><strong th:text="#{common.label.id}">ID:</strong> <span th:text="${sessionData.id}">-</span></p>
 
-<p><strong th:text="#{common.label.project}">Projeto:</strong>
-    <span th:text="${sessionData.projeto != null ? sessionData.projeto.name : #messages.msg('common.field.none', #messages.msg('common.project'))}">-</span>
-</p>
+    <p><strong th:text="#{common.label.project}">Projeto:</strong>
+        <span th:text="${sessionData.projeto != null ? sessionData.projeto.name : #messages.msg('common.field.none', #messages.msg('common.project'))}">-</span>
+    </p>
 
-<p><strong th:text="#{common.label.strategy}">Estratégia:</strong>
-    <span th:text="${sessionData.strategy != null ? sessionData.strategy.name : #messages.msg('common.field.none', #messages.msg('common.strategy'))}">-</span>
-</p>
+    <p><strong th:text="#{common.label.strategy}">Estratégia:</strong>
+        <span th:text="${sessionData.strategy != null ? sessionData.strategy.name : #messages.msg('common.field.none', #messages.msg('common.strategy'))}">-</span>
+    </p>
 
-<p><strong th:text="#{common.label.tester}">Tester:</strong>
-    <span th:text="${sessionData.tester != null ? sessionData.tester.name : #messages.msg('common.field.none', #messages.msg('common.tester'))}">-</span>
-</p>
+    <p><strong th:text="#{common.label.tester}">Tester:</strong>
+        <span th:text="${sessionData.tester != null ? sessionData.tester.name : #messages.msg('common.field.none', #messages.msg('common.tester'))}">-</span>
+    </p>
 
-<p><strong th:text="#{common.label.duration}">Duração:</strong> <span th:text="${sessionData.duration != null ? sessionData.duration : '-'}"></span> <span th:text="#{common.unit.min}">min</span></p>
+    <p><strong th:text="#{common.label.duration}">Duração:</strong>
+        <span th:text="${sessionData.duration != null ? sessionData.duration : '-'}"></span>
+        <span th:text="#{common.unit.min}">min</span>
+    </p>
 
-<p><strong th:text="#{common.label.status}">Status:</strong> <span th:text="${sessionData.status != null ? sessionData.status : '-'}"></span></p>
+    <p><strong th:text="#{common.label.status}">Status:</strong>
+        <span th:text="${sessionData.status != null ? sessionData.status : '-'}"></span>
+    </p>
 
-<p><strong th:text="#{common.label.description}">Descrição:</strong> <span th:text="${sessionData.description != null ? sessionData.description : '-'}"></span></p>
+    <p><strong th:text="#{common.label.description}">Descrição:</strong>
+        <span th:text="${sessionData.description != null ? sessionData.description : '-'}"></span>
+    </p>
 
-<a th:href="@{/sessions/list}" th:text="#{common.action.back}">Voltar</a>
+    <a th:href="@{/sessions/list}" class="btn-back" th:text="#{common.action.back}">Voltar</a>
+</div>
 </body>
 </html>

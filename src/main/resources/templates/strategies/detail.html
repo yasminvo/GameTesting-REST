@@ -3,59 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <title th:text="#{common.title.details(${module.strategy})}">Detalhes da Estratégia</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/styleVer.css}">
 </head>
 <body>
-<h1 th:text="#{common.header.details(${module.strategy})}">Detalhes da Estratégia</h1>
+<div class="content-card">
+    <h1 th:text="#{common.header.details(${module.strategy})}">Detalhes da Estratégia</h1>
 
-<p><strong th:text="#{common.label.id}">ID:</strong> <span th:text="${strategy.id}">-</span></p>
-<p>
-    <strong th:text="#{common.label.name}">Nome:</strong>
-    <span th:text="${strategy.name != null ? strategy.name : #messages.msg('common.field.none', #messages.msg('common.name'))}">-</span>
-</p>
+    <p>
+        <strong th:text="#{common.label.id}">ID:</strong>
+        <span th:text="${strategy.id}">-</span>
+    </p>
 
-<p>
-    <strong th:text="#{common.label.description}">Descrição:</strong>
-    <span th:text="${strategy.description != null ? strategy.description : #messages.msg('common.field.none', #messages.msg('common.description'))}">-</span>
-</p>
+    <p>
+        <strong th:text="#{common.label.name}">Nome:</strong>
+        <span th:text="${strategy.name != null ? strategy.name : #messages.msg('common.field.none', #messages.msg('common.name'))}">-</span>
+    </p>
 
-<h2 th:text="#{common.tips}">Dicas</h2>
-<ul th:if="${strategy != null}">
-    <li th:each="tip : ${strategy.tips}" th:text="${tip}">Dica</li>
-    <li th:if="${#lists.isEmpty(strategy.tips)}"
-        th:text="${#messages.msg('common.none_available', #messages.msg('common.tips'))}">
-        Nenhuma dica disponível.
-    </li>
-</ul>
-<p th:if="${strategy == null}" th:text="${#messages.msg('common.field.none', 'Estratégia')}">Estratégia não disponível.</p>
+    <p>
+        <strong th:text="#{common.label.description}">Descrição:</strong>
+        <span th:text="${strategy.description != null ? strategy.description : #messages.msg('common.field.none', #messages.msg('common.description'))}">-</span>
+    </p>
 
+    <h2 th:text="#{common.tips}">Dicas</h2>
+    <ul th:if="${strategy != null}">
+        <li th:each="tip : ${strategy.tips}" th:text="${tip}">Dica</li>
+        <li th:if="${#lists.isEmpty(strategy.tips)}"
+            th:text="${#messages.msg('common.none_available', #messages.msg('common.tips'))}">
+            Nenhuma dica disponível.
+        </li>
+    </ul>
+    <p th:if="${strategy == null}" th:text="${#messages.msg('common.field.none', 'Estratégia')}">Estratégia não disponível.</p>
 
-<h2 th:text="#{common.examples}">Exemplos</h2>
-
-<!-- Se a estratégia existe -->
-<div th:if="${strategy != null}">
-    <div th:if="${strategy.examples != null and !strategy.examples.isEmpty()}">
-        <div th:each="example : ${strategy.examples}">
-            <p>
-                <strong th:text="#{common.label.text}">Texto:</strong>
-                <span th:text="${example.text}">Texto do exemplo</span>
-            </p>
-            <div th:if="${example.image != null}">
-                <p><strong th:text="#{common.label.image}">Imagem:</strong></p>
-                <img th:src="@{${example.image.filePath}}"
-                     th:alt="${example.image.altPath}"
-                     width="200" />
+    <h2 th:text="#{common.examples}">Exemplos</h2>
+    <div th:if="${strategy != null}">
+        <div th:if="${strategy.examples != null and !strategy.examples.isEmpty()}">
+            <div th:each="example : ${strategy.examples}">
+                <p>
+                    <strong th:text="#{common.label.text}">Texto:</strong>
+                    <span th:text="${example.text}">Texto do exemplo</span>
+                </p>
+                <div th:if="${example.image != null}">
+                    <p><strong th:text="#{common.label.image}">Imagem:</strong></p>
+                    <img th:src="@{${example.image.filePath}}"
+                         th:alt="${example.image.altPath}"
+                         width="200" />
+                </div>
+                <hr/>
             </div>
-            <hr/>
         </div>
+        <p th:if="${strategy.examples == null or strategy.examples.isEmpty()}"
+           th:text="${#messages.msg('common.none_available', #messages.msg('common.examples'))}">
+            Nenhum exemplo disponível.
+        </p>
     </div>
 
-    <p th:if="${strategy.examples == null or strategy.examples.isEmpty()}"
-       th:text="${#messages.msg('common.none_available', #messages.msg('common.examples'))}">
-        Nenhum exemplo disponível.
-    </p>
+    <p th:if="${strategy == null}" th:text="${#messages.msg('common.field.none', 'Estratégia')}">Estratégia não disponível.</p>
+
+    <a th:href="@{/sessions/list}" class="btn-back" th:text="#{common.action.back}">Voltar</a>
 </div>
-
-<!-- Se a estratégia estiver null -->
-<p th:if="${strategy == null}" th:text="${#messages.msg('common.field.none', 'Estratégia')}">Estratégia não disponível.</p>
-
-<a th:href="@{/sessions/list}" th:text="#{common.action.back}">Voltar</a>
+</body>
+</html>

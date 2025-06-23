@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <title th:text="#{common.title.edit(${module.session})}">Editar Sessão</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}">
 </head>
 <body>
 <h1 th:text="#{common.header.edit(${module.session})}">Editar Sessão</h1>
-
+<div class="content-card">
 <form th:action="@{'/sessions/edit/' + ${sessionData.id}}" method="post">
     <label for="strategyId" th:text="#{sessions.edit.label.new_strategy}">Nova Estratégia:</label>
     <select name="strategyId" id="strategyId">
@@ -27,5 +28,6 @@
 </form>
 
 <a th:href="@{/sessions/list}" th:text="#{common.action.back}">Voltar</a>
+</div>
 </body>
 </html>

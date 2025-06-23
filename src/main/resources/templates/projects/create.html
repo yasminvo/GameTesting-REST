@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <title th:text="#{common.title.create(${module.project})}">Criar Projeto</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}">
 </head>
 <body>
 <h1 th:text="#{projects.create.header}">Criar Novo Projeto</h1>
-
 <form th:action="@{/projects/create}" th:object="${projeto}" method="post">
     <label th:for="*{name}" th:text="#{common.label.name}">Nome:</label>
     <input type="text" th:field="*{name}" required />
@@ -29,6 +29,5 @@
     <button type="submit" th:text="#{common.action.save}">Salvar</button>
 </form>
 <a th:href="@{/projects}" th:text="#{common.action.back_to_list}">Cancelar</a>
-
 </body>
 </html>

@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8" />
     <title th:text="#{common.title.edit(${module.user})}">Editar Usuário</title> <link rel="stylesheet" href="/css/styles.css" />
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}">
 </head>
 <body>
+<div class="content-card">
 <header>
     <h1 th:text="#{common.header.edit(${module.user})}">Editar Usuário</h1> <nav>
         <a th:href="@{/users}" th:text="#{common.action.back_to_list}">Voltar para Lista</a> </nav>
@@ -18,5 +20,6 @@
     <label th:text="#{common.label.password}">Senha:</label> <input type="password" th:field="*{password}" />
     <small th:text="#{common.password.hint}">Deixe em branco para não alterar</small> <br/><br/>
     <button type="submit" th:text="#{common.action.update}">Atualizar</button> </form>
+</div>
 </body>
 </html>

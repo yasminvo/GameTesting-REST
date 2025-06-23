@@ -2,19 +2,48 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
 <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="#{common.title.create(${module.tester})}">Criar Tester</title>
-    <link rel="stylesheet" href="/css/styles.css" />
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}">
 </head>
-<body>
-<header>
-    <h1 th:text="#{common.header.create(${module.tester})}">Criar Tester</h1>
-</header>
+<body class="dashboard-page">
 
-<form th:action="@{/users/create-tester}" method="post" th:object="${user}">
-    <input type="text" th:field="*{name}" th:placeholder="#{common.placeholder.name}" required />
-    <input type="email" th:field="*{email}" th:placeholder="#{common.placeholder.email}" required />
-    <input type="password" th:field="*{password}" th:placeholder="#{common.placeholder.password}" required />
-    <button type="submit" th:text="#{common.action.create}">Criar</button>
-</form>
+<nav class="dashboard-nav">
+    <h2 th:text="#{dashboard.nav.title}">Navegação</h2>
+    <ul>
+        <li><a th:href="@{/users/list}" th:text="#{dashboard.nav.list_users}">Listar Usuários</a></li>
+        <li><a th:href="@{/users/create-tester}" class="active" th:text="#{dashboard.nav.register_tester}">Cadastrar Tester</a></li>
+        <li><a th:href="@{/users/create-admin}" th:text="#{dashboard.nav.register_admin}">Cadastrar Admin</a></li>
+        <li><a th:href="@{/projects/list}" th:text="#{dashboard.nav.manage_projects}">Gerenciar Projetos</a></li>
+        <li><a th:href="@{/strategies/list}" th:text="#{dashboard.nav.manage_strategies}">Gerenciar Estratégias</a></li>
+        <li><a th:href="@{/sessions/list}" th:text="#{dashboard.nav.manage_sessions}">Gerenciar Sessões</a></li>
+    </ul>
+</nav>
+
+<div class="dashboard-main-content">
+    <main>
+        <h1 th:text="#{common.header.create(${module.tester})}">Criar Novo Tester</h1>
+
+        <div class="content-card">
+            <form th:action="@{/users/create-tester}" method="post" th:object="${user}">
+
+                <label for="name" th:text="#{common.label.name}">Nome Completo:</label>
+                <input id="name" type="text" th:field="*{name}" th:placeholder="#{common.placeholder.name}" required />
+
+                <label for="email" th:text="#{common.label.email}">Email:</label>
+                <input id="email" type="email" th:field="*{email}" th:placeholder="#{common.placeholder.email}" required />
+
+                <label for="password" th:text="#{common.label.password}">Senha:</label>
+                <input id="password" type="password" th:field="*{password}" th:placeholder="#{common.placeholder.password}" required />
+
+                <div class="form-actions" style="margin-top: 1rem;">
+                    <button type="submit" class="btn-primary" th:text="#{common.action.create}">Criar Tester</button>
+                    <a th:href="@{/users/list}" class="btn-secondary-action" th:text="#{common.action.back}">Voltar</a>
+                </div>
+            </form>
+        </div>
+    </main>
+</div>
+
 </body>
 </html>

@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <title th:text="#{common.title.create(${module.strategy})}">Criar Estratégia</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}">
 </head>
 <body>
 <h1 th:text="#{strategies.create.header}">Criar Nova Estratégia</h1>
-
+<div class="content-card">
 <form th:action="@{/strategies/create}" th:object="${strategy}" method="post">
 
     <label for="name" th:text="#{common.label.name}">Nome:</label>
@@ -80,5 +81,6 @@
     }
     /*]]>*/
 </script>
+</div>
 </body>
 </html>

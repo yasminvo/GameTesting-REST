@@ -3,9 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <title th:text="#{common.title.details(${module.project})}">Detalhes do Projeto</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}">
 </head>
 <body>
 <h1 th:text="${projeto.name}">Nome do Projeto</h1>
+<div class="content-card">
 
 <p><strong th:text="#{common.label.description}">Descrição:</strong> <span th:text="${projeto.description}">Descrição</span></p>
 <p><strong th:text="#{common.label.creation_date}">Data de Criação:</strong> <span th:text="${#temporals.format(projeto.creationDate, 'dd/MM/yyyy HH:mm')}">Data</span></p>
@@ -19,5 +21,6 @@
 -->
 
 <a th:href="@{/projects/list}" th:text="#{common.action.back}">Voltar</a>
+</div>
 </body>
 </html>

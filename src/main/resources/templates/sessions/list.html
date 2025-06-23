@@ -1,68 +1,98 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="#{common.title.list(${module.session})}">Lista de Sessões</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}">
 </head>
-<body>
-<h1 th:text="#{common.header.list(${module.session})}">Lista de Sessões</h1>
-<a th:href="@{/sessions/create}" th:text="#{sessions.list.button.create_new}">Criar Nova Sessão</a>
-<table border="1">
-    <thead>
-    <tr>
-        <th th:text="#{common.id}">ID</th>
-        <th th:text="#{common.project}">Projeto</th>
-        <th th:text="#{common.strategy}">Estrategia</th>
-        <th th:text="#{common.tester}">Tester</th>
-        <th th:text="#{common.duration}">Duração</th>
-        <th th:text="#{common.status}">Status</th>
-        <th th:text="#{common.actions}">Ações</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="sessionT : ${sessions}">
-        <td th:text="${sessionT.id}"></td>
-        <td th:text="${sessionT.projeto.name}"></td>
-        <td th:text="${sessionT.strategy != null ? sessionT.strategy.name : #messages.msg('common.field.none', #messages.msg('common.strategy'))}"></td>
-        <td th:text="${sessionT.tester.name}"></td>
-        <td th:text="${sessionT.duration}"></td>
-        <td th:text="${sessionT.status}"></td>
-        <td>
-            <a th:href="@{'/sessions/' + ${sessionT.id}}" th:text="#{common.action.details}">Detalhes</a>
+<body class="dashboard-page">
 
-            <a sec:authorize="hasRole('ADMIN')"
-               th:href="@{'/sessions/edit/' + ${sessionT.id}}" th:text="#{common.action.edit}">Editar</a>
+<!-- Barra de Navegação Lateral -->
+<nav class="dashboard-nav">
+    <h2>Navegação</h2>
+    <ul>
+        <th:block sec:authorize="hasRole('ADMIN')">
+            <li><a th:href="@{/users/list}">Listar Usuários</a></li>
+            <li><a th:href="@{/projects/list}">Gerenciar Projetos</a></li>
+            <li><a th:href="@{/strategies/list}">Gerenciar Estratégias</a></li>
+        </th:block>
+        <th:block sec:authorize="hasRole('TESTER')">
+            <li><a th:href="@{/projects/view-tester}">Listar Projetos</a></li>
+            <li><a th:href="@{/strategies/list}">Consultar Estratégias</a></li>
+        </th:block>
+        <li><a th:href="@{/sessions/list}" class="active">Gerenciar Sessões</a></li>
+    </ul>
+</nav>
 
-            <a sec:authorize="hasRole('TESTER')"
-               th:if="${#strings.toUpperCase(sessionT.status.toString()) != 'FINALIZED'}"
-               th:href="@{'/sessions/edit/' + ${sessionT.id}}" th:text="#{common.action.edit}">Editar</a>
+<!-- Conteúdo Principal -->
+<div class="dashboard-main-content">
+    <main>
+        <div class="dashboard-header">
+            <h1 th:text="#{common.header.list(${module.session})}">Lista de Sessões</h1>
+            <a th:href="@{/sessions/create}" class="btn-primary" th:text="#{sessions.list.button.create_new}">Criar Nova Sessão</a>
+        </div>
 
-            <form th:if="${sessionT.strategy != null}"
-                  th:action="@{'/strategies/' + ${sessionT.strategy.id}}"
-                  style="display: inline;">
-                <button type="submit" th:text="#{sessions.list.button.view_strategy}">Ver Estratégia</button>
-            </form>
+        <table>
+            <thead>
+            <tr>
+                <th th:text="#{common.id}">ID</th>
+                <th th:text="#{common.project}">Projeto</th>
+                <th th:text="#{common.strategy}">Estratégia</th>
+                <th th:text="#{common.tester}">Tester</th>
+                <th th:text="#{common.duration}">Duração</th>
+                <th th:text="#{common.status}">Status</th>
+                <th th:text="#{common.actions}">Ações</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="sessionT : ${sessions}">
+                <td th:text="${sessionT.id}">1</td>
+                <td th:text="${sessionT.projeto.name}">Projeto ABC</td>
+                <td th:text="${sessionT.strategy != null ? sessionT.strategy.name : '-'}">Estratégia X</td>
+                <td th:text="${sessionT.tester.name}">Tester Z</td>
+                <td th:text="${sessionT.duration != null ? sessionT.duration + ' min' : '-'}">60 min</td>
+                <td th:text="${sessionT.status}">IN_EXECUTION</td>
+                <td>
+                    <!-- Container para alinhar os botões -->
+                    <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center;">
 
-            <form th:if="${#strings.toUpperCase(sessionT.status.toString()) == 'CREATED'}"
-                  th:action="@{'/sessions/start/' + ${sessionT.id}}" method="post" style="display: inline;">
-                <button type="submit" th:text="#{sessions.list.button.start_execution}">Iniciar Execução</button>
-            </form>
-            <form th:if="${#strings.toUpperCase(sessionT.status.toString()) == 'IN_EXECUTION'}"
-                  th:action="@{'/sessions/bugs-report/' + ${sessionT.id}}" method="get" style="display: inline;">
-                <button type="submit">Reportar Bug</button>
-            </form>
-            <form th:if="${#strings.toUpperCase(sessionT.status.toString()) != 'CREATED'}"
-                  th:action="@{'/sessions/bugs-list/' + ${sessionT.id}}" method="get" style="display: inline;">
-                <button type="submit">Ver Bugs</button>
-            </form>
-            <form th:if="${#strings.toUpperCase(sessionT.status.toString()) == 'IN_EXECUTION' and sessionT.startTime != null and
-                          #temporals.createNow().isAfter(sessionT.startTime.plusMinutes(sessionT.duration))}"
-                  th:action="@{'/sessions/' + ${sessionT.id} + '/finalize'}" method="post" style="display: inline;">
-                <button type="submit">Finalizar Sessão</button>
-            </form>
-        </td>
-    </tr>
-    </tbody>
-</table>
+                        <!-- AÇÕES COMUNS -->
+                        <a th:href="@{'/sessions/' + ${sessionT.id}}" class="btn-secondary-action" th:text="#{common.action.details}">Detalhes</a>
+
+                        <a sec:authorize="hasRole('ADMIN')" th:href="@{'/sessions/edit/' + ${sessionT.id}}" class="btn-secondary-action" th:text="#{common.action.edit}">Editar</a>
+                        <a sec:authorize="hasRole('TESTER')" th:if="${#strings.toUpperCase(sessionT.status.toString()) != 'FINALIZED'}" th:href="@{'/sessions/edit/' + ${sessionT.id}}" class="btn-secondary-action" th:text="#{common.action.edit}">Editar</a>
+
+                        <form th:if="${sessionT.strategy != null}" th:action="@{'/strategies/' + ${sessionT.strategy.id}}" method="get" style="display: inline;">
+                            <button type="submit" class="btn-secondary-action" th:text="#{sessions.list.button.view_strategy}">Ver Estratégia</button>
+                        </form>
+
+                        <!-- AÇÕES CONDICIONAIS COM ESTILOS ESPECÍFICOS DO CSS -->
+                        <form th:if="${#strings.toUpperCase(sessionT.status.toString()) == 'CREATED'}" th:action="@{'/sessions/start/' + ${sessionT.id}}" method="post" style="display: inline;">
+                            <!-- Utiliza o seletor button[name="action_start"] do CSS -->
+                            <button type="submit" name="action_start" th:text="#{sessions.list.button.start_execution}">Iniciar</button>
+                        </form>
+
+                        <form th:if="${#strings.toUpperCase(sessionT.status.toString()) == 'IN_EXECUTION'}" th:action="@{'/sessions/bugs-report/' + ${sessionT.id}}" method="get" style="display: inline;">
+                            <!-- Utiliza o seletor button[name="action_bug_report"] do CSS -->
+                            <button type="submit" name="action_bug_report">Reportar Bug</button>
+                        </form>
+
+                        <form th:if="${#strings.toUpperCase(sessionT.status.toString()) != 'CREATED'}" th:action="@{'/sessions/bugs-list/' + ${sessionT.id}}" method="get" style="display: inline;">
+                            <button type="submit" class="btn-secondary-action">Ver Bugs</button>
+                        </form>
+
+                        <form th:if="${#strings.toUpperCase(sessionT.status.toString()) == 'IN_EXECUTION' and sessionT.startTime != null and #temporals.createNow().isAfter(sessionT.startTime.plusMinutes(sessionT.duration))}" th:action="@{'/sessions/' + ${sessionT.id} + '/finalize'}" method="post" style="display: inline;">
+                            <!-- Utiliza o seletor button[name="action_finalize"] do CSS -->
+                            <button type="submit" name="action_finalize">Finalizar Sessão</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </main>
+</div>
+
 </body>
 </html>

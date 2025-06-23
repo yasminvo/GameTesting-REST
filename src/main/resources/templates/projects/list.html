@@ -1,54 +1,83 @@
 <!DOCTYPE html>
-<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="#{common.title.list(${module.project})}">Lista de Projetos</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}">
 </head>
-<body>
-<h1 th:text="#{common.header.list(${module.project})}">Projetos</h1>
+<body class="dashboard-page">
 
-<a th:href="@{/projects/create}" th:text="#{projects.list.button.create_new}">Criar Novo Projeto</a>
+<nav class="dashboard-nav">
+    <h2 th:text="#{dashboard.nav.title}">Navegação</h2>
+    <ul>
+        <!-- 1. Aplicando a internacionalização na navegação -->
+        <li><a th:href="@{/users/list}" th:text="#{dashboard.nav.list_users}">Listar Usuários</a></li>
+        <li><a th:href="@{/users/create-tester}" th:text="#{dashboard.nav.register_tester}">Cadastrar Tester</a></li>
+        <li><a th:href="@{/users/create-admin}" th:text="#{dashboard.nav.register_admin}">Cadastrar Admin</a></li>
+        <li><a th:href="@{/projects/list}" class="active" th:text="#{dashboard.nav.manage_projects}">Gerenciar Projetos</a></li>
+        <li><a th:href="@{/strategies/list}" th:text="#{dashboard.nav.manage_strategies}">Gerenciar Estratégias</a></li>
+        <li><a th:href="@{/sessions/list}" th:text="#{dashboard.nav.manage_test_sessions}">Gerenciar Sessões</a></li>
+    </ul>
+</nav>
 
-<form method="get" th:action="@{/projects/list}">
-    <label for="sort" th:text="#{common.sort_by}">Ordenar por:</label>
-    <select name="sort" id="sort">
-        <option value="creationDate" th:selected="${param.sort == 'creationDate'}" th:text="#{common.sort.creation_date_asc}">Data de Criação (asc)</option>
-        <option value="creationDate_desc" th:selected="${param.sort == 'creationDate_desc'}" th:text="#{common.sort.creation_date_desc}">Data de Criação (desc)</option>
-        <option value="name" th:selected="${param.sort == 'name'}" th:text="#{common.sort.name_asc}">Nome (A-Z)</option>
-        <option value="name_desc" th:selected="${param.sort == 'name_desc'}" th:text="#{common.sort.name_desc}">Nome (Z-A)</option>
-    </select>
-    <button type="submit" th:text="#{common.button.sort}">Ordenar</button>
-</form>
+<div class="dashboard-main-content">
+    <main>
+        <div class="dashboard-header">
+            <h1 th:text="#{common.header.list(${module.project})}">Projetos</h1>
+            <a th:href="@{/projects/create}" class="btn-primary" th:text="#{projects.list.button.create_new}">Criar Novo Projeto</a>
+        </div>
 
-<table border="1">
-    <thead>
-    <tr>
-        <th th:text="#{common.name}">Nome</th>
-        <th th:text="#{common.description}">Descrição</th>
-        <th th:text="#{common.creation_date}">Data de Criação</th>
-        <th th:text="#{common.members}">Membros</th>
-        <th th:text="#{common.actions}">Ações</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="projeto : ${projetos}">
-        <td th:text="${projeto.name}">Nome</td>
-        <td th:text="${projeto.description}">Descrição</td>
-        <td th:text="${#temporals.format(projeto.creationDate, 'dd/MM/yyyy HH:mm')}">Data</td>
-        <td>
-            <ul>
-                <li th:each="member : ${projeto.members}" th:text="${member.email}">Membros</li>
-            </ul>
-        </td>
-        <td>
-            <a th:href="@{/projects/{id}(id=${projeto.id})}" th:text="#{common.action.view}">Ver</a> |
-            <a th:href="@{/projects/edit/{id}(id=${projeto.id})}" th:text="#{common.action.edit}">Editar</a> |
-            <form th:action="@{/projects/delete/{id}(id=${projeto.id})}" method="post" style="display:inline;">
-                <button type="submit" th:text="#{common.action.delete}" onclick="return confirm([[#{common.confirm.delete_item(${module.project})}]]);">Deletar</button>
+        <!-- 2. Aplicando a nova classe .filter-bar -->
+        <div class="content-card filter-bar">
+            <form method="get" th:action="@{/projects/list}">
+                <label for="sort" th:text="#{common.sort_by}">Ordenar por:</label>
+                <select name="sort" id="sort">
+                    <option value="creationDate" th:selected="${param.sort == 'creationDate'}" th:text="#{common.sort.creation_date_asc}"></option>
+                    <option value="creationDate_desc" th:selected="${param.sort == 'creationDate_desc'}" th:text="#{common.sort.creation_date_desc}"></option>
+                    <option value="name" th:selected="${param.sort == 'name'}" th:text="#{common.sort.name_asc}"></option>
+                    <option value="name_desc" th:selected="${param.sort == 'name_desc'}" th:text="#{common.sort.name_desc}"></option>
+                </select>
+                <button type="submit" class="btn-secondary-action" th:text="#{common.button.sort}">Ordenar</button>
             </form>
-        </td>
-    </tr>
-    </tbody>
-</table>
+        </div>
+
+        <table>
+            <thead>
+            <tr>
+                <th th:text="#{common.name}">Nome</th>
+                <th th:text="#{common.description}">Descrição</th>
+                <th th:text="#{common.creation_date}">Data de Criação</th>
+                <th th:text="#{common.members}">Membros</th>
+                <th th:text="#{common.actions}">Ações</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="projeto : ${projetos}">
+                <td th:text="${projeto.name}">Nome do Projeto</td>
+                <td th:text="${projeto.description}">Descrição do Projeto</td>
+                <td th:text="${#temporals.format(projeto.creationDate, 'dd/MM/yyyy HH:mm')}">Data</td>
+                <td>
+                    <!-- 3. Aplicando a nova classe .table-list -->
+                    <ul class="table-list">
+                        <li th:each="member : ${projeto.members}" th:text="${member.email}">membro@email.com</li>
+                    </ul>
+                </td>
+                <td>
+                    <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center;">
+                        <a th:href="@{/projects/{id}(id=${projeto.id})}" class="btn-secondary-action" th:text="#{common.action.view}">Ver</a>
+                        <a th:href="@{/projects/edit/{id}(id=${projeto.id})}" class="btn-secondary-action" th:text="#{common.action.edit}">Editar</a>
+                        <form th:action="@{/projects/delete/{id}(id=${projeto.id})}" method="post" style="display:inline;">
+                            <button type="submit" class="btn-remove" onclick="return confirm([[#
+                                    {common.confirm.delete_item(${module.project})}]]);" th:text="#{common.action.delete}">Excluir</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </main>
+</div>
+
 </body>
 </html>

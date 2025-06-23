@@ -2,25 +2,34 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
 <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="#{common.title.login}">Login</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}">
 </head>
-<body>
-<h1 th:text="#{common.header.login}">Login</h1>
-<form th:action="@{/login}" method="post">
-    <label th:text="#{common.label.email}">Email:</label>
-    <input type="text" name="username" required />
-    <br/><br/>
-    <label th:text="#{common.label.password}">Senha:</label>
-    <input type="password" name="password" required />
-    <br/><br/>
-    <button type="submit" th:text="#{common.action.enter}">Entrar</button>
-</form>
+<body class="login-page">
 
-<form th:action="@{/strategies/list}" method="get" style="margin-top: 20px;">
-    <button type="submit" th:text="#{login.button.enter_as_visitor}">Entrar como visitante</button>
-</form>
+<div class="content-card">
+    <h1 th:text="#{common.header.login}">Login</h1>
 
-<p th:if="${error}" th:text="${error}" style="color:red"></p>
-<p th:if="${msg}" th:text="${msg}" style="color:green"></p>
+    <div th:if="${param.error}" class="alert alert-danger" th:text="#{login.error.invalid_credentials}">
+        Email ou senha inválidos.
+    </div>
+    <div th:if="${msg}" th:text="${msg}" class="alert alert-success"></div>
+
+    <form th:action="@{/login}" method="post">
+        <label for="username" th:text="#{common.label.email}">Email:</label>
+        <input type="text" id="username" name="username" required />
+
+        <label for="password" th:text="#{common.label.password}">Senha:</label>
+        <input type="password" id="password" name="password" required />
+
+        <button type="submit" class="btn-primary" th:text="#{common.action.enter}">Entrar</button>
+    </form>
+
+    <a th:href="@{/strategies/list}" class="btn-secondary-action" th:text="#{login.button.enter_as_visitor}">
+        Entrar como visitante
+    </a>
+</div>
+
 </body>
 </html>
