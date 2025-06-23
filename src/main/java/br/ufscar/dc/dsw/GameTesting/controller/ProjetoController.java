@@ -1,10 +1,16 @@
 package br.ufscar.dc.dsw.GameTesting.controller;
 
 import br.ufscar.dc.dsw.GameTesting.dtos.ProjetoDTO;
+import br.ufscar.dc.dsw.GameTesting.exceptions.AppException;
+import br.ufscar.dc.dsw.GameTesting.model.User;
+import br.ufscar.dc.dsw.GameTesting.repository.UserRepository;
 import br.ufscar.dc.dsw.GameTesting.service.ProjetoService;
 import br.ufscar.dc.dsw.GameTesting.service.UserService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -21,10 +27,12 @@ public class ProjetoController {
 
     private final ProjetoService projetoService;
     private final UserService userService;
+    private final UserRepository userRepository;
 
-    public ProjetoController(ProjetoService projetoService, UserService userService) {
+    public ProjetoController(ProjetoService projetoService, UserService userService, UserRepository userRepository) {
         this.projetoService = projetoService;
         this.userService = userService;
+        this.userRepository = userRepository;
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -38,7 +46,13 @@ public class ProjetoController {
     @PreAuthorize("hasRole('TESTER')")
     @GetMapping("/view-tester")
     public String viewProjects(@RequestParam(defaultValue = "creationDate") String sort, Model model) {
-        List<ProjetoDTO> projetos = projetoService.listAllSorted(sort);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String email = auth.getName();
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new AppException("Usuario não encontrado.", HttpStatus.NOT_FOUND));
+
+        Long testerId = user.getId();
+        List<ProjetoDTO> projetos = projetoService.listByTesterIdSorted(testerId, sort);
         model.addAttribute("projetos", projetos);
         return "projects/view-tester";
     }

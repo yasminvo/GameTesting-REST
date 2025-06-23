@@ -50,6 +50,29 @@ public class ProjetoService {
                 .collect(Collectors.toList());
     }
 
+    public List<ProjetoDTO> listByTesterIdSorted(Long userId, String sort) {
+        Sort sorting;
+        switch (sort.toLowerCase()) {
+            case "name":
+                sorting = Sort.by("name").ascending(); break;
+            case "name_desc":
+                sorting = Sort.by("name").descending(); break;
+            case "creationdate_desc":
+                sorting = Sort.by("creationDate").descending(); break;
+            case "creationdate":
+            default:
+                sorting = Sort.by("creationDate").ascending(); break;
+        }
+
+        List<Projeto> projetos = projetoRepository.findByMembersId(userId, sorting);
+
+        return projetos.stream()
+                .map(ProjetoDTO::fromEntity)
+                .collect(Collectors.toList());
+    }
+
+
+
     public ProjetoDTO getById(Long id) {
         return projetoRepository.findById(id)
                 .map(ProjetoDTO::fromEntity)
@@ -99,8 +122,12 @@ public class ProjetoService {
     }
 
     public boolean deleteProjeto(Long id) {
-        projetoRepository.findById(id)
+        Projeto projeto = projetoRepository.findById(id)
                 .orElseThrow(() -> new AppException("Projeto não encontrado para exclusão.", HttpStatus.NOT_FOUND));
+
+        if (projeto.getSessions() != null && !projeto.getSessions().isEmpty()) {
+            throw new AppException("Não é possível deletar projeto. Está associado a alguma sessão.", HttpStatus.BAD_REQUEST);
+        }
 
         projetoRepository.deleteById(id);
         return true;

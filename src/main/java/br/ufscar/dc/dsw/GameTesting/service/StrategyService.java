@@ -127,9 +127,13 @@ public class StrategyService {
     }
 
     public void delete(Long id) {
-        if (!strategyRepository.existsById(id)) {
-            throw new AppException("Estratégia com ID " + id + " não encontrada para exclusão.", HttpStatus.NOT_FOUND);
+        Strategy strategy = strategyRepository.findById(id)
+                .orElseThrow(() -> new AppException("Estratégia com ID " + id + " não encontrada.", HttpStatus.NOT_FOUND));
+
+        if (strategy.getSession() != null && !strategy.getSession().isEmpty()) {
+            throw new AppException("Não é possível deletar estratégia. Está associado a alguma sessão.", HttpStatus.BAD_REQUEST);
         }
+
         strategyRepository.deleteById(id);
     }
 
