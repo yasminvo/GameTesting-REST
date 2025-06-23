@@ -71,7 +71,7 @@ public class UserController {
             return "users/create-admin";
         }
         userService.create(user, Role.ADMIN);
-        return "redirect:/users";
+        return "redirect:/users/list";
     }
 
     @GetMapping("/create-tester")
