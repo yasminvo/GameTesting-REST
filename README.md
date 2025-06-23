@@ -7,7 +7,9 @@
 ## Membros
 
 Yasmin Victoria Oliveira 812308
+
 Melissa Shimada 821620
+
 Fernanda Aramaki 791969
 
 ## Tecnologias Utilizadas
