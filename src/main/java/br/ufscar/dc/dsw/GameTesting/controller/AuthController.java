@@ -5,9 +5,24 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 
 @Controller
 public class AuthController {
+
+    @ModelAttribute("module")
+    public Map<String, String> module() {
+        Map<String, String> module = new HashMap<>();
+        module.put("user", "Usuário");
+        module.put("project", "Projeto");
+        module.put("strategy", "Estratégia");
+        module.put("session", "Sessão");
+        module.put("tester", "Tester");
+        module.put("admin", "Administrador");
+        return module;
+    }
 
     @GetMapping("/login")
     public String login(

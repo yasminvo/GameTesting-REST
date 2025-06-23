@@ -1,32 +1,31 @@
-<!-- templates/sessions/edit.html -->
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Editar Sessão</title>
+    <title th:text="#{common.title.edit(${module.session})}">Editar Sessão</title>
 </head>
 <body>
-<h1>Editar Sessão</h1>
+<h1 th:text="#{common.header.edit(${module.session})}">Editar Sessão</h1>
 
 <form th:action="@{'/sessions/edit/' + ${sessionData.id}}" method="post">
-    <label for="strategyId">Nova Estratégia:</label>
+    <label for="strategyId" th:text="#{sessions.edit.label.new_strategy}">Nova Estratégia:</label>
     <select name="strategyId" id="strategyId">
         <option th:each="s : ${strategias}"
                 th:value="${s.id}"
                 th:text="${s.name}"
-                th:selected="${sessionData.strategy != null and s.id == sessionData.strategy.id}">Estratégia</option>
+                th:selected="${sessionData.strategy != null and s.id == sessionData.strategy.id}"><span th:text="#{common.placeholder.strategy}">Estratégia</span></option>
     </select><br>
 
-    <label for="duration">Duração (min):</label>
-    <input type="number" id="duration" name="duration" th:value="${sessionData.duration}" required><br>
+    <label for="duration" th:text="#{common.label.duration}">Duração (min):</label>
+    <input type="number" id="duration" name="duration" th:value="${sessionData.duration}" required><span th:text="#{common.unit.min}"> min</span><br>
 
-    <label for="description">Descrição:</label>
+    <label for="description" th:text="#{common.label.description}">Descrição:</label>
     <textarea id="description" name="description" rows="4" cols="50"
               th:text="${sessionData.description}"></textarea><br>
 
-    <button type="submit">Salvar Alterações</button>
+    <button type="submit" th:text="#{common.action.save_changes}">Salvar Alterações</button>
 </form>
 
-<a th:href="@{/sessions/list}">Voltar</a>
+<a th:href="@{/sessions/list}" th:text="#{common.action.back}">Voltar</a>
 </body>
 </html>

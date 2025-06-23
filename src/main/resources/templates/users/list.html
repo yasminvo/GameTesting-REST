@@ -2,21 +2,21 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
 <head>
     <meta charset="UTF-8" />
-    <title>Lista de Usuários</title>
+    <title th:text="#{common.title.list(${module.user})}">Lista de Usuários</title>
     <link rel="stylesheet" href="/css/styles.css" />
 </head>
 <body>
 <header>
-    <h1>Usuários</h1>
+    <h1 th:text="#{common.header.list(${module.user})}">Usuários</h1>
 </header>
 
 <table border="1" cellpadding="5" cellspacing="0">
     <thead>
     <tr>
-        <th>ID</th>
-        <th>Email</th>
-        <th>Role</th>
-        <th>Ações</th>
+        <th th:text="#{common.id}">ID</th>
+        <th th:text="#{common.email}">Email</th>
+        <th th:text="#{common.role}">Role</th>
+        <th th:text="#{common.actions}">Ações</th>
     </tr>
     </thead>
     <tbody>
@@ -25,10 +25,11 @@
         <td th:text="${user.email}">email@example.com</td>
         <td th:text="${user.role}">ADMIN</td>
         <td>
-            <a th:href="@{/users/{id}(id=${user.id})}">Detalhes</a> |
-            <a th:href="@{/users/edit/{id}(id=${user.id})}">Editar</a> |
+            <a th:href="@{/users/{id}(id=${user.id})}" th:text="#{common.action.details}">Detalhes</a> |
+            <a th:href="@{/users/edit/{id}(id=${user.id})}" th:text="#{common.action.edit}">Editar</a> |
             <form th:action="@{/users/delete/{id}(id=${user.id})}" method="post" style="display:inline">
-                <button type="submit" onclick="return confirm('Confirma exclusão?')">Excluir</button>
+                <button type="submit" th:text="#{common.action.delete}"
+                    th:onclick="'return confirm(\'' + #{common.confirm.delete} + '\');'">Excluir</button>
             </form>
         </td>
     </tr>

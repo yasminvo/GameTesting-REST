@@ -2,22 +2,19 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
 <head>
     <meta charset="UTF-8" />
-    <title>Criar Tester</title>
+    <title th:text="#{common.title.create(${module.tester})}">Criar Tester</title>
     <link rel="stylesheet" href="/css/styles.css" />
 </head>
 <body>
 <header>
-    <h1>Criar Tester</h1>
-<!--    <nav>-->
-<!--        <a th:href="@{/users}">Voltar para Lista</a>-->
-<!--    </nav>-->
+    <h1 th:text="#{common.header.create(${module.tester})}">Criar Tester</h1>
 </header>
 
 <form th:action="@{/users/create-tester}" method="post" th:object="${user}">
-    <input type="text" th:field="*{name}" placeholder="Nome" />
-    <input type="email" th:field="*{email}" placeholder="Email" />
-    <input type="password" th:field="*{password}" placeholder="Senha" />
-    <button type="submit">Criar</button>
+    <input type="text" th:field="*{name}" th:placeholder="#{common.placeholder.name}" required />
+    <input type="email" th:field="*{email}" th:placeholder="#{common.placeholder.email}" required />
+    <input type="password" th:field="*{password}" th:placeholder="#{common.placeholder.password}" required />
+    <button type="submit" th:text="#{common.action.create}">Criar</button>
 </form>
 </body>
 </html>

@@ -2,32 +2,32 @@
 <html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Lista de Projetos</title>
+    <title th:text="#{common.title.list(${module.project})}">Lista de Projetos</title>
 </head>
 <body>
-<h1>Projetos</h1>
+<h1 th:text="#{common.header.list(${module.project})}">Projetos</h1>
 
-<a th:href="@{/projects/create}">Criar Novo Projeto</a>
+<a th:href="@{/projects/create}" th:text="#{projects.list.button.create_new}">Criar Novo Projeto</a>
 
 <form method="get" th:action="@{/projects/list}">
-    <label for="sort">Ordenar por:</label>
+    <label for="sort" th:text="#{common.sort_by}">Ordenar por:</label>
     <select name="sort" id="sort">
-        <option value="creationDate" th:selected="${param.sort == 'creationDate'}">Data de Criação (asc)</option>
-        <option value="creationDate_desc" th:selected="${param.sort == 'creationDate_desc'}">Data de Criação (desc)</option>
-        <option value="name" th:selected="${param.sort == 'name'}">Nome (A-Z)</option>
-        <option value="name_desc" th:selected="${param.sort == 'name_desc'}">Nome (Z-A)</option>
+        <option value="creationDate" th:selected="${param.sort == 'creationDate'}" th:text="#{common.sort.creation_date_asc}">Data de Criação (asc)</option>
+        <option value="creationDate_desc" th:selected="${param.sort == 'creationDate_desc'}" th:text="#{common.sort.creation_date_desc}">Data de Criação (desc)</option>
+        <option value="name" th:selected="${param.sort == 'name'}" th:text="#{common.sort.name_asc}">Nome (A-Z)</option>
+        <option value="name_desc" th:selected="${param.sort == 'name_desc'}" th:text="#{common.sort.name_desc}">Nome (Z-A)</option>
     </select>
-    <button type="submit">Ordenar</button>
+    <button type="submit" th:text="#{common.button.sort}">Ordenar</button>
 </form>
 
 <table border="1">
     <thead>
     <tr>
-        <th>Nome</th>
-        <th>Descrição</th>
-        <th>Data de Criação</th>
-        <th>Membros</th>
-        <th>Ações</th>
+        <th th:text="#{common.name}">Nome</th>
+        <th th:text="#{common.description}">Descrição</th>
+        <th th:text="#{common.creation_date}">Data de Criação</th>
+        <th th:text="#{common.members}">Membros</th>
+        <th th:text="#{common.actions}">Ações</th>
     </tr>
     </thead>
     <tbody>
@@ -41,10 +41,10 @@
             </ul>
         </td>
         <td>
-            <a th:href="@{/projects/{id}(id=${projeto.id})}">Ver</a> |
-            <a th:href="@{/projects/edit/{id}(id=${projeto.id})}">Editar</a> |
+            <a th:href="@{/projects/{id}(id=${projeto.id})}" th:text="#{common.action.view}">Ver</a> |
+            <a th:href="@{/projects/edit/{id}(id=${projeto.id})}" th:text="#{common.action.edit}">Editar</a> |
             <form th:action="@{/projects/delete/{id}(id=${projeto.id})}" method="post" style="display:inline;">
-                <button type="submit" onclick="return confirm('Tem certeza que deseja deletar este projeto?');">Deletar</button>
+                <button type="submit" th:text="#{common.action.delete}" onclick="return confirm([[#{common.confirm.delete_item(${module.project})}]]);">Deletar</button>
             </form>
         </td>
     </tr>

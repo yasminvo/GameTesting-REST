@@ -2,13 +2,13 @@
 <html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Detalhes do Projeto</title>
+    <title th:text="#{common.title.details(${module.project})}">Detalhes do Projeto</title>
 </head>
 <body>
 <h1 th:text="${projeto.name}">Nome do Projeto</h1>
 
-<p><strong>Descrição:</strong> <span th:text="${projeto.description}">Descrição</span></p>
-<p><strong>Data de Criação:</strong> <span th:text="${#temporals.format(projeto.creationDate, 'dd/MM/yyyy HH:mm')}">Data</span></p>
+<p><strong th:text="#{common.label.description}">Descrição:</strong> <span th:text="${projeto.description}">Descrição</span></p>
+<p><strong th:text="#{common.label.creation_date}">Data de Criação:</strong> <span th:text="${#temporals.format(projeto.creationDate, 'dd/MM/yyyy HH:mm')}">Data</span></p>
 
 <!--
 <p><strong>Membros:</strong>
@@ -18,6 +18,6 @@
 </p>
 -->
 
-<a th:href="@{/projects/list}">Voltar</a>
+<a th:href="@{/projects/list}" th:text="#{common.action.back}">Voltar</a>
 </body>
 </html>

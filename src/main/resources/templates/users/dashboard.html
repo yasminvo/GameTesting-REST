@@ -2,30 +2,30 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
 <head>
     <meta charset="UTF-8" />
-    <title>Dashboard - Sistema (Admin)</title>
+    <title th:text="#{dashboard.admin.title_full}">Dashboard - Sistema (Admin)</title>
     <link rel="stylesheet" href="/css/styles.css" />
 </head>
 <body>
 <header>
-    <h1>Dashboard</h1>
+    <h1 th:text="#{common.header.dashboard}">Dashboard</h1>
     <form th:action="@{/logout}" method="post" style="display:inline;">
-        <button type="submit">Sair</button>
+        <button type="submit" th:text="#{common.action.logout}">Sair</button>
     </form>
 </header>
 
 <nav>
     <ul>
-        <li><a th:href="@{/users/list}">Listar usuários</a></li>
-        <li><a th:href="@{/users/create-tester}">Cadastrar Tester</a></li>
-        <li><a th:href="@{/users/create-admin}">Cadastrar Admin</a></li>
-        <li><a th:href="@{/projects/list}">Gerenciar Projetos</a></li>
-        <li><a th:href="@{/strategies/list}">Gerenciar Estratégias</a></li>
-        <li><a th:href="@{/sessions/list}">Gerenciar Sessões de Teste</a></li>
+        <li><a th:href="@{/users/list}" th:text="#{dashboard.nav.list_users}">Listar usuários</a></li>
+        <li><a th:href="@{/users/create-tester}" th:text="#{dashboard.nav.register_tester}">Cadastrar Tester</a></li>
+        <li><a th:href="@{/users/create-admin}" th:text="#{dashboard.nav.register_admin}">Cadastrar Admin</a></li>
+        <li><a th:href="@{/projects/list}" th:text="#{dashboard.nav.manage_projects}">Gerenciar Projetos</a></li>
+        <li><a th:href="@{/strategies/list}" th:text="#{dashboard.nav.manage_strategies}">Gerenciar Estratégias</a></li>
+        <li><a th:href="@{/sessions/list}" th:text="#{dashboard.nav.manage_test_sessions}">Gerenciar Sessões de Teste</a></li>
     </ul>
 </nav>
 
 <main>
-    <p>Bem-vindo ao painel administrativo.</p>
+    <p th:text="#{common.welcome_message}">Bem-vindo ao painel administrativo.</p>
 
 
 </main>

@@ -2,30 +2,28 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
 <head>
     <meta charset="UTF-8" />
-    <title>Dashboard - Sistema (Tester)</title>
+    <title th:text="#{dashboard.tester.title_full}">Dashboard - Sistema (Tester)</title>
     <link rel="stylesheet" href="/css/styles.css" />
 </head>
 <body>
 <header>
-    <h1>Dashboard</h1>
+    <h1 th:text="#{common.header.dashboard}">Dashboard</h1>
     <form th:action="@{/logout}" method="post" style="display:inline;">
-        <button type="submit">Sair</button>
+        <button type="submit" th:text="#{common.action.logout}">Sair</button>
     </form>
 </header>
 
 <nav>
     <ul>
-        <li><a th:href="@{/projects/view-tester}">Listar Projetos</a></li>
-        <li><a th:href="@{/strategies/list}">Listar Estratégias</a></li>
-        <li><a th:href="@{/sessions/list}">Gerenciar Sessões</a></li>
+        <li><a th:href="@{/projects/view-tester}" th:text="#{dashboard.nav.list_projects}">Listar Projetos</a></li>
+        <li><a th:href="@{/strategies/list}" th:text="#{dashboard.nav.list_strategies}">Listar Estratégias</a></li>
+        <li><a th:href="@{/sessions/list}" th:text="#{dashboard.nav.manage_sessions}">Gerenciar Sessões</a></li>
     </ul>
 </nav>
 
 <main>
-    <p>Bem-vindo ao painel administrativo.</p>
+    <p th:text="#{common.welcome_message}">Bem-vindo ao painel administrativo.</p>
 
-    <!-- Você pode adicionar mais seções e dados conforme a necessidade -->
-
-</main>
+    </main>
 </body>
 </html>

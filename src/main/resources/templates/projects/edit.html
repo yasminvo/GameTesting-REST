@@ -2,21 +2,21 @@
 <html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Editar Projeto</title>
+    <title th:text="#{common.title.edit(${module.project})}">Editar Projeto</title>
 </head>
 <body>
-<h1>Editar Projeto</h1>
+<h1 th:text="#{common.header.edit(${module.project})}">Editar Projeto</h1>
 
 <form th:action="@{/projects/edit/{id}(id=${projeto.id})}" th:object="${projeto}" method="post">
-    <label th:for="*{name}">Nome:</label>
+    <label th:for="*{name}" th:text="#{common.label.name}">Nome:</label>
     <input type="text" th:field="*{name}" required />
     <br />
 
-    <label th:for="*{description}">Descrição:</label>
+    <label th:for="*{description}" th:text="#{common.label.description}">Descrição:</label>
     <textarea th:field="*{description}" required></textarea>
     <br />
 
-    <label for="memberIds">Membros:</label>
+    <label for="memberIds" th:text="#{common.label.members}">Membros:</label>
     <select id="memberIds" th:field="*{memberIds}" multiple>
         <option th:each="usuario : ${usuarios}"
                 th:value="${usuario.id}"
@@ -26,8 +26,8 @@
 
     <br />
 
-    <button type="submit">Atualizar</button>
+    <button type="submit" th:text="#{common.action.update}">Atualizar</button>
 </form>
-<a th:href="@{/projects}">Cancelar</a>
+<a th:href="@{/projects}" th:text="#{common.action.back_to_list}">Cancelar</a>
 </body>
 </html>

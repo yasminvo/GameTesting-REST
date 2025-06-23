@@ -11,12 +11,27 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
+
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/users")
 @PreAuthorize("hasRole('ADMIN') or hasRole('TESTER')")
 public class UserController {
+
+    @ModelAttribute("module")
+    public Map<String, String> module() {
+        Map<String, String> module = new HashMap<>();
+        module.put("user", "Usuário");
+        module.put("project", "Projeto");
+        module.put("strategy", "Estratégia");
+        module.put("session", "Sessão");
+        module.put("tester", "Tester");
+        module.put("admin", "Administrador");
+        return module;
+    }
 
     private final UserService userService;
 

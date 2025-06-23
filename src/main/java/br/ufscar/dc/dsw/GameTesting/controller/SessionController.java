@@ -16,11 +16,25 @@ import org.springframework.web.bind.annotation.*;
 
 import java.nio.file.AccessDeniedException;
 import java.security.Principal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/sessions")
 public class SessionController {
+
+    @ModelAttribute("module")
+    public Map<String, String> module() {
+        Map<String, String> module = new HashMap<>();
+        module.put("user", "Usuário");
+        module.put("project", "Projeto");
+        module.put("strategy", "Estratégia");
+        module.put("session", "Sessão");
+        module.put("tester", "Tester");
+        module.put("admin", "Administrador");
+        return module;
+    }
 
     private final SessionService sessionService;
     private final ProjetoService projetoService;

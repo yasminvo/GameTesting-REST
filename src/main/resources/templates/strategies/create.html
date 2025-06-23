@@ -2,66 +2,62 @@
 <html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Criar Estratégia</title>
+    <title th:text="#{common.title.create(${module.strategy})}">Criar Estratégia</title>
 </head>
 <body>
-<h1>Criar Nova Estratégia</h1>
+<h1 th:text="#{strategies.create.header}">Criar Nova Estratégia</h1>
 
 <form th:action="@{/strategies/create}" th:object="${strategy}" method="post">
 
-    <!-- Nome -->
-    <label for="name">Nome:</label>
+    <label for="name" th:text="#{common.label.name}">Nome:</label>
     <input id="name" type="text" th:field="*{name}" required />
     <br/>
 
-    <!-- Descrição -->
-    <label for="description">Descrição:</label>
+    <label for="description" th:text="#{common.label.description}">Descrição:</label>
     <textarea id="description" th:field="*{description}" required></textarea>
     <br/>
 
-    <!-- Dicas -->
-    <h3>Dicas</h3>
+    <h3 th:text="#{common.tips}">Dicas</h3>
     <div id="tips-container">
         <div th:each="tip, i : *{tips}">
             <input type="text" th:field="*{tips[__${i.index}__]}" />
-            <button type="button" onclick="this.parentElement.remove()">Remover</button>
+            <button type="button" onclick="this.parentElement.remove()" th:text="#{common.action.remove}">Remover</button>
         </div>
     </div>
-    <button type="button" onclick="addTip()">Adicionar Dica</button>
+    <button type="button" onclick="addTip()" th:text="#{common.add_tip}">Adicionar Dica</button>
 
-    <!-- Exemplos -->
-    <h3>Exemplos</h3>
+    <h3 th:text="#{common.examples}">Exemplos</h3>
     <div id="examples-container">
         <div th:each="example, i : *{examples}">
-            <label>Texto:</label>
+            <label th:text="#{common.label.text}">Texto:</label>
             <input type="text" th:field="*{examples[__${i.index}__].text}" />
             <br/>
-            <label>Imagem (filePath):</label>
+            <label th:text="#{common.label.image_filepath}">Imagem (filePath):</label>
             <input type="text" th:field="*{examples[__${i.index}__].image.filePath}" />
             <br/>
-            <label>AltPath:</label>
+            <label th:text="#{common.label.altpath}">AltPath:</label>
             <input type="text" th:field="*{examples[__${i.index}__].image.altPath}" />
-            <button type="button" onclick="this.parentElement.remove()">Remover</button>
+            <button type="button" onclick="this.parentElement.remove()" th:text="#{common.action.remove}">Remover</button>
             <hr/>
         </div>
     </div>
-    <button type="button" onclick="addExample()">Adicionar Exemplo</button>
+    <button type="button" onclick="addExample()" th:text="#{common.add_example}">Adicionar Exemplo</button>
 
     <br/><br/>
-    <button type="submit">Salvar Estratégia</button>
+    <button type="submit" th:text="#{strategies.create.button.save_strategy}">Salvar Estratégia</button>
 </form>
 
-<a th:href="@{/strategies/list}">Cancelar</a>
+<a th:href="@{/strategies/list}" th:text="#{common.action.back_to_list}">Cancelar</a>
 
-<!-- Scripts para adicionar dinamicamente -->
-<script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
     function addTip() {
         const container = document.getElementById("tips-container");
         const index = container.children.length;
         const div = document.createElement("div");
         div.innerHTML = `
             <input type="text" name="tips[${index}]" />
-            <button type="button" onclick="this.parentElement.remove()">Remover</button>
+            <button type="button" onclick="this.parentElement.remove()">[[#{common.action.remove}]]</button>
         `;
         container.appendChild(div);
     }
@@ -71,17 +67,18 @@
         const index = container.children.length;
         const div = document.createElement("div");
         div.innerHTML = `
-            <label>Texto:</label>
+            <label>[[#{common.label.text}]]</label>
             <input type="text" name="examples[${index}].text" /><br/>
-            <label>Imagem (filePath):</label>
+            <label>[[#{common.label.image_filepath}]]</label>
             <input type="text" name="examples[${index}].image.filePath" /><br/>
-            <label>AltPath:</label>
+            <label>[[#{common.label.altpath}]]</label>
             <input type="text" name="examples[${index}].image.altPath" />
-            <button type="button" onclick="this.parentElement.remove()">Remover</button>
+            <button type="button" onclick="this.parentElement.remove()">[[#{common.action.remove}]]</button>
             <hr/>
         `;
         container.appendChild(div);
     }
+    /*]]>*/
 </script>
 </body>
 </html>
