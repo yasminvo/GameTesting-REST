@@ -2,32 +2,55 @@
 <html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="#{common.title.create(${module.project})}">Criar Projeto</title>
     <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}">
 </head>
-<body>
-<h1 th:text="#{projects.create.header}">Criar Novo Projeto</h1>
-<form th:action="@{/projects/create}" th:object="${projeto}" method="post">
-    <label th:for="*{name}" th:text="#{common.label.name}">Nome:</label>
-    <input type="text" th:field="*{name}" required />
-    <br />
+<body class="dashboard-page">
 
-    <label th:for="*{description}" th:text="#{common.label.description}">Descrição:</label>
-    <textarea th:field="*{description}" required></textarea>
-    <br />
+<nav class="dashboard-nav">
+    <h2 th:text="#{dashboard.nav.title}">Navegação</h2>
+    <ul>
+        <li><a th:href="@{/users/list}" th:text="#{dashboard.nav.list_users}">Listar Usuários</a></li>
+        <li><a th:href="@{/users/create-tester}" th:text="#{dashboard.nav.register_tester}">Cadastrar Tester</a></li>
+        <li><a th:href="@{/users/create-admin}" th:text="#{dashboard.nav.register_admin}">Cadastrar Admin</a></li>
 
-    <label for="memberIds" th:text="#{common.label.members}">Membros:</label>
-    <select id="memberIds" th:field="*{memberIds}" multiple>
-        <option th:each="usuario : ${usuarios}"
-                th:value="${usuario.id}"
-                th:text="${usuario.name}">
-        </option>
-    </select>
+        <li><a th:href="@{/projects/list}" class="active" th:text="#{dashboard.nav.manage_projects}">Gerenciar Projetos</a></li>
+        <li><a th:href="@{/strategies/list}" th:text="#{dashboard.nav.manage_strategies}">Gerenciar Estratégias</a></li>
+        <li><a th:href="@{/sessions/list}" th:text="#{dashboard.nav.manage_sessions}">Gerenciar Sessões</a></li>
+    </ul>
+</nav>
 
-    <br />
+<div class="dashboard-main-content">
+    <main>
+        <h1 th:text="#{projects.create.header}">Criar Novo Projeto</h1>
 
-    <button type="submit" th:text="#{common.action.save}">Salvar</button>
-</form>
-<a th:href="@{/projects}" th:text="#{common.action.back_to_list}">Cancelar</a>
+        <div class="content-card">
+
+            <form th:action="@{/projects/create}" th:object="${projeto}" th:method="post">
+
+                <label for="name" th:text="#{common.label.name}">Nome:</label>
+                <input id="name" type="text" th:field="*{name}" th:placeholder="#{common.placeholder.name}" required />
+
+                <label for="description" th:text="#{common.label.description}">Descrição:</label>
+                <textarea id="description" th:field="*{description}" th:placeholder="#{common.placeholder.description}" required></textarea>
+
+                <label for="memberIds" th:text="#{common.label.members}">Membros:</label>
+                <select id="memberIds" th:field="*{memberIds}" multiple="multiple" class="form-select-multiple">
+                    <option th:each="usuario : ${usuarios}"
+                            th:value="${usuario.id}"
+                            th:text="${usuario.name}">
+                    </option>
+                </select>
+
+                <div class="form-actions" style="margin-top: 1rem;">
+                    <button type="submit" class="btn-primary" th:text="#{common.action.save}">Salvar Projeto</button>
+                    <a th:href="@{/projects/list}" class="btn-secondary-action" th:text="#{common.action.back}">Voltar</a>
+                </div>
+            </form>
+        </div>
+    </main>
+</div>
+
 </body>
 </html>
