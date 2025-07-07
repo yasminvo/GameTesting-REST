@@ -3,35 +3,18 @@ package br.ufscar.dc.dsw.GameTesting.controller;
 import br.ufscar.dc.dsw.GameTesting.enums.Role;
 import br.ufscar.dc.dsw.GameTesting.model.User;
 import br.ufscar.dc.dsw.GameTesting.service.UserService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.validation.Valid;
-
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-@Controller
-@RequestMapping("/users")
-@PreAuthorize("hasRole('ADMIN') or hasRole('TESTER')")
+
+@RestController
+@RequestMapping("/api/users")
+@PreAuthorize("hasRole('ADMIN')")
 public class UserController {
-
-    @ModelAttribute("module")
-    public Map<String, String> module() {
-        Map<String, String> module = new HashMap<>();
-        module.put("user", "Usuário");
-        module.put("project", "Projeto");
-        module.put("strategy", "Estratégia");
-        module.put("session", "Sessão");
-        module.put("tester", "Tester");
-        module.put("admin", "Administrador");
-        return module;
-    }
 
     private final UserService userService;
 
@@ -39,76 +22,39 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("/dashboard")
-    public String showAdminDashboard() {
-        return "users/dashboard";
-    }
-
-
-    @GetMapping("list")
-    public String listUsers(Model model) {
+    @GetMapping("")
+    public ResponseEntity<List<User>> getAll() {
         List<User> users = userService.findAll();
-        model.addAttribute("users", users);
-        return "users/list";
+        return ResponseEntity.ok(users);
     }
 
-    @GetMapping("/{id:\\d+}")
-    public String getUser(@PathVariable Long id, Model model) {
+    @GetMapping("/{id}")
+    public ResponseEntity<User> getById(@PathVariable Long id) {
         User user = userService.findById(id);
-        model.addAttribute("user", user);
-        return "users/detail";
+        return ResponseEntity.ok(user);
     }
 
-    @GetMapping("/create-admin")
-    public String showCreateAdminForm(Model model) {
-        model.addAttribute("user", new User());
-        return "users/create-admin";
+    @PostMapping("/admins")
+    public ResponseEntity<User> createAdmin(@RequestBody User user) {
+        User response = userService.create(user, Role.ADMIN);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @PostMapping("/create-admin")
-    public String createAdmin(@Valid @ModelAttribute User user, BindingResult result, Model model) {
-        if (result.hasErrors()) {
-            return "users/create-admin";
-        }
-        userService.create(user, Role.ADMIN);
-        return "redirect:/users/list";
+    @PostMapping("/testers")
+    public ResponseEntity<User> createTester(@RequestBody User user) {
+        User response = userService.create(user, Role.TESTER);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @GetMapping("/create-tester")
-    public String showCreateTesterForm(Model model) {
-        model.addAttribute("user", new User());
-        return "users/create-tester";
+    @PutMapping("/{id}")
+    public ResponseEntity<User> update(@PathVariable Long id, @RequestBody User userDetails) {
+        User response = userService.update(id, userDetails);
+        return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/create-tester")
-    public String createTester(@Valid @ModelAttribute User user, BindingResult result, Model model) {
-        if (result.hasErrors()) {
-            return "users/create-tester";
-        }
-        userService.create(user, Role.TESTER);
-        return "redirect:/users/list";
-    }
-
-    @GetMapping("/edit/{id}")
-    public String showEditForm(@PathVariable Long id, Model model) {
-        User user = userService.findById(id);
-        model.addAttribute("user", user);
-        return "users/edit"; // template users/edit.html
-    }
-
-    @PostMapping("/edit/{id}")
-    public String updateUser(@PathVariable Long id, @Valid @ModelAttribute User user, BindingResult result) {
-        if (result.hasErrors()) {
-            return "users/edit";
-        }
-        userService.update(id, user);
-        return "redirect:/users/list";
-    }
-
-    @PostMapping("/delete/{id}")
-    public String deleteUser(@PathVariable Long id) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
         userService.delete(id);
-        return "redirect:/users/list";
+        return ResponseEntity.noContent().build();
     }
 }
-

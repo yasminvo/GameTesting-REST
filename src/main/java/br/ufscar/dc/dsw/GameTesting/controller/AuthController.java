@@ -1,53 +1,62 @@
 package br.ufscar.dc.dsw.GameTesting.controller;
 
-import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import br.ufscar.dc.dsw.GameTesting.dtos.LoginRequestDTO;
+import br.ufscar.dc.dsw.GameTesting.dtos.JwtResponseDTO;
+import br.ufscar.dc.dsw.GameTesting.enums.Role;
+import br.ufscar.dc.dsw.GameTesting.exceptions.AppException;
+import br.ufscar.dc.dsw.GameTesting.model.User;
+import br.ufscar.dc.dsw.GameTesting.repository.UserRepository;
+import br.ufscar.dc.dsw.GameTesting.utils.JwtUtil;
+import br.ufscar.dc.dsw.GameTesting.service.CustomUserDetailsService;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Optional;
 
-
-@Controller
+@RestController
+@RequestMapping("/auth")
 public class AuthController {
 
-    @ModelAttribute("module")
-    public Map<String, String> module() {
-        Map<String, String> module = new HashMap<>();
-        module.put("user", "Usuário");
-        module.put("project", "Projeto");
-        module.put("strategy", "Estratégia");
-        module.put("session", "Sessão");
-        module.put("tester", "Tester");
-        module.put("admin", "Administrador");
-        return module;
-    }
+    @Autowired
+    private AuthenticationManager authManager;
 
-    @GetMapping("/login")
-    public String login(
-            @RequestParam(value = "error", required = false) String error,
-            @RequestParam(value = "logout", required = false) String logout,
-            Model model
-    ) {
-        if (error != null) {
-            model.addAttribute("error", "Usuário ou senha inválidos.");
-        }
-        if (logout != null) {
-            model.addAttribute("msg", "Logout realizado com sucesso.");
-        }
-        return "login";
-    }
+    @Autowired
+    private JwtUtil jwtUtil;
 
-    @GetMapping("/users/redirect")
-    public String redirectBasedOnRole(Authentication authentication) {
-        if (authentication.getAuthorities().stream()
-                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
-            return "redirect:/users/dashboard";
-        } else if (authentication.getAuthorities().stream()
-                .anyMatch(a -> a.getAuthority().equals("ROLE_TESTER"))) {
-            return "redirect:/tester/dashboard";
+    @Autowired
+    private CustomUserDetailsService userDetailsService;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody LoginRequestDTO request) {
+        try {
+            authManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
+            );
+            final var userDetails = userDetailsService.loadUserByUsername(request.getEmail());
+
+            Optional<User> optionalUser = userRepository.findByEmail(request.getEmail());
+
+            if (optionalUser.isEmpty()) {
+                throw new AppException("Usuário não encontrado.", HttpStatus.UNAUTHORIZED);
+            }
+
+            User user = optionalUser.get();
+            Role role = user.getRole();
+
+            String token = jwtUtil.generateToken(userDetails, role);
+
+            return ResponseEntity.ok(new JwtResponseDTO(token));
+        } catch (AuthenticationException e) {
+            throw new AppException("Usuário ou senha inválidos.", HttpStatus.FORBIDDEN);
         }
-        return "access-denied";
     }
 }

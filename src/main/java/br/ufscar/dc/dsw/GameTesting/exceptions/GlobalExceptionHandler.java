@@ -1,28 +1,38 @@
 package br.ufscar.dc.dsw.GameTesting.exceptions;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@ControllerAdvice
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
+
+@RestControllerAdvice
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(AppException.class)
-    public ModelAndView handleAppException(AppException ex, Model model) {
-        ModelAndView mav = new ModelAndView("/errors/custom-error");
-        mav.setStatus(ex.getStatus());
-        mav.addObject("message", ex.getMessage());
-        return mav;
+    public ResponseEntity<Map<String, Object>> handleAppException(AppException ex) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+        body.put("status", ex.getStatus().value());
+        body.put("error", ex.getStatus().getReasonPhrase());
+        body.put("message", ex.getMessage());
+
+        return new ResponseEntity<>(body, ex.getStatus());
     }
 
     @ExceptionHandler(Exception.class)
-    public ModelAndView handleGenericException(Exception ex, Model model) {
+    public ResponseEntity<Map<String, Object>> handleGenericException(Exception ex) {
         ex.printStackTrace();
-        ModelAndView mav = new ModelAndView("/errors/custom-error");
-        mav.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
-        mav.addObject("message", "Erro interno no servidor.");
-        return mav;
+
+        Map<String, Object> body = new HashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+        body.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
+        body.put("error", HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
+        body.put("message", "Erro interno no servidor.");
+
+        return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
