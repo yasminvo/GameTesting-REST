@@ -19,7 +19,7 @@ public class ProjetoDTO {
     private String description;
     private LocalDateTime creationDate;
     private List<UserDTO> members = new ArrayList<>();
-    private List<Long> memberIds = new ArrayList<>();
+//    private List<Long> memberIds = new ArrayList<>();
 
 
 //    private List<SessionResponseDTO> sessions;
