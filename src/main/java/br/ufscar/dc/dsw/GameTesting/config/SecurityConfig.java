@@ -1,5 +1,6 @@
 package br.ufscar.dc.dsw.GameTesting.config;
 
+import br.ufscar.dc.dsw.GameTesting.exceptions.JwtAuthenticationEntryPoint;
 import br.ufscar.dc.dsw.GameTesting.filters.JwtFilter;
 import br.ufscar.dc.dsw.GameTesting.service.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 
+
 @EnableMethodSecurity
 @Configuration
 public class SecurityConfig {
@@ -26,6 +28,9 @@ public class SecurityConfig {
 
     @Autowired
     private CustomUserDetailsService userDetailsService;
+
+    @Autowired
+    private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -42,6 +47,9 @@ public class SecurityConfig {
         return http
                 .securityMatcher("/**")
                 .csrf(AbstractHttpConfigurer::disable)
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/",

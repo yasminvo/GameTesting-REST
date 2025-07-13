@@ -105,7 +105,7 @@ public class SessionService {
         return sessionRepository.save(session);
     }
 
-    public Session startSession(Long sessionId) throws AccessDeniedException {
+    public Session startSession(Long sessionId) {
         Session session = sessionRepository.findById(sessionId)
                 .orElseThrow(() -> new IllegalStateException("A sessão não existe"));
 
@@ -119,7 +119,7 @@ public class SessionService {
         return sessionRepository.save(session);
     }
 
-    public Session finalizeSession(Long sessionId) throws AccessDeniedException {
+    public Session finalizeSession(Long sessionId) {
         Session session = sessionRepository.findById(sessionId)
                 .orElseThrow(() -> new IllegalStateException("A sessão não existe"));
 
@@ -140,6 +140,7 @@ public class SessionService {
         return SessionResponseDTO.fromEntity(session);
 
     }
+
 
     public SessionResponseDTO updateSession(Long sessionId, SessionUpdateDTO sessionUpdateDTO, Principal principal) {
         Session session = sessionRepository.findById(sessionId)
