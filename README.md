@@ -1,6 +1,6 @@
 # GameTesting — Sistema de Gerenciamento de Sessões de Teste
 
-> Aplicação web para gerenciamento de projetos de teste, estratégias, sessões e usuários, desenvolvida com **Spring Boot**, **Thymeleaf** e **MySQL**.
+> Aplicação web para gerenciamento de projetos de teste, estratégias, sessões e usuários, desenvolvida com **Spring Boot**, **Controladores REST** e **MySQL**.
 
 ---
 
@@ -16,11 +16,9 @@ Fernanda Aramaki 791969
 
 - Java 17  
 - Spring Boot  
-- Spring MVC + Spring Security  
-- Thymeleaf  
+- Spring MVC (Controladores REST) + Spring Security
 - MySQL  
 - Maven
-
 ---
 
 ## Como Rodar o Projeto
@@ -28,7 +26,7 @@ Fernanda Aramaki 791969
 ### 1. Clone o repositório:
 
 ```bash
-git clone https://github.com/yasminvo/GameTesting
+git clone https://github.com/yasminvo/GameTesting-REST
 cd GameTesting
 
 ```
@@ -59,14 +57,22 @@ mvn spring-boot:run
 ```bash
 http://localhost:8080
 ```
+### 6. Acesse documentação via Swagger UI
+```bash
+http://localhost:8080/swagger-ui/index.html#/
+```
 ## Perfis de Usuário
 ADMIN: tem acesso total à criação, edição e exclusão de usuários, estratégias, sessões e projetos.
 
 TESTER: pode visualizar os projetos dos quais participa e executar sessões de teste, além de ver todas as estratégias cadastradas no sistema.
 
-## Interface 
+## Documentação Swagger UI
 
-![Tela de Login](/images/login.png)
+![Rotas de Usuário](/images/user-controller.png)
 
-![Admin dashboard](/images/dashboard-admin.png)
+![Rotas de Projeto](/images/project-controller.png)
+
+![Rotas de Estratégia](/images/strategy-controller.png)
+
+![Rotas de Sessão](/images/session-controller.png)
 
