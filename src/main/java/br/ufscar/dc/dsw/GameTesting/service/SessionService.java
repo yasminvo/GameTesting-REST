@@ -12,7 +12,6 @@ import br.ufscar.dc.dsw.GameTesting.repository.*;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -182,6 +181,18 @@ public class SessionService {
         Session updatedSession = sessionRepository.save(session);
 
         return SessionResponseDTO.fromEntity(updatedSession);
+    }
+
+    public void deleteSession(Long id, Locale locale) {
+        Session session = sessionRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        messageSource.getMessage("session.notfound_with_id", new Object[]{id}, locale)));
+
+        if (session.getStatus() == Status.IN_EXECUTION) {
+            throw new IllegalStateException(messageSource.getMessage("session.not_in_execution", null, locale));
+        }
+
+        sessionRepository.delete(session);
     }
 
     public BugDTO reportBug(Long sessionId, BugDTO bugDto, Locale locale) {

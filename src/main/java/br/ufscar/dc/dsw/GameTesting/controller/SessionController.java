@@ -73,6 +73,13 @@ public class SessionController {
     }
 
     @PreAuthorize("hasRole('ADMIN') or hasRole('TESTER')")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id, Locale locale) {
+        sessionService.deleteSession(id, locale);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PreAuthorize("hasRole('ADMIN') or hasRole('TESTER')")
     @PostMapping("/{sessionId}/bugs")
     public ResponseEntity<BugDTO> reportBug(@PathVariable Long sessionId, @RequestBody BugDTO bugDto, Locale locale) {
         BugDTO response = sessionService.reportBug(sessionId, bugDto, locale);
