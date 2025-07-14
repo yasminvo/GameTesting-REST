@@ -41,7 +41,7 @@ public class StrategyController {
     }
 
     @PostMapping("")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('TESTER')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> createStrategy(@RequestBody CreateStrategyDTO strategyDTO, Locale locale) {
         Strategy savedStrategy = strategyService.save(strategyDTO, locale);
         String msg = messageSource.getMessage("strategy.created.success", null, locale);
@@ -67,7 +67,7 @@ public class StrategyController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('TESTER')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> updateStrategy(@PathVariable Long id, @RequestBody CreateStrategyDTO dto, Locale locale) {
         try {
             StrategyResponseDTO updated = strategyService.update(id, dto, locale);
@@ -80,7 +80,7 @@ public class StrategyController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('TESTER')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> deleteStrategy(@PathVariable Long id, Locale locale) {
         try {
             strategyService.delete(id, locale);
@@ -93,7 +93,7 @@ public class StrategyController {
     }
 
     @PostMapping("/examples/{strategyId}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('TESTER')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> addExampleToStrategy(@PathVariable Long strategyId, @RequestBody ExampleDTO exampleDTO, Locale locale) {
         try {
             ExampleDTO responseDTO = exampleService.save(exampleDTO, strategyId, locale);
@@ -105,7 +105,7 @@ public class StrategyController {
     }
 
     @GetMapping("/examples/{strategyId}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('TESTER')")
     public ResponseEntity<?> getExamplesByStrategyId(@PathVariable Long strategyId, Locale locale) {
         try {
             List<ExampleDTO> responseDTO = exampleService.findByStrategyId(strategyId, locale);
@@ -147,6 +147,7 @@ public class StrategyController {
     }
 
     @DeleteMapping("/images/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> deleteImage(@PathVariable Long id, Locale locale) {
         try {
             imageService.deleteImage(id, locale);
