@@ -130,6 +130,14 @@ public class SessionService {
         session.setStatus(Status.FINALIZED);
         session.getStatusChangedTime().add(LocalDateTime.now());
 
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime endTimeExpected = session.getStartTime().plusMinutes(session.getDuration());
+
+        if (now.isBefore(endTimeExpected)) {
+            throw new IllegalStateException(
+                    messageSource.getMessage("session.too_early_to_finalize", null, locale));
+        }
+
         return sessionRepository.save(session);
     }
 
@@ -174,23 +182,6 @@ public class SessionService {
         Session updatedSession = sessionRepository.save(session);
 
         return SessionResponseDTO.fromEntity(updatedSession);
-    }
-
-    @Scheduled(fixedRate = 50000000)
-    @Transactional
-    public void autofinalizarSessao() {
-        List<Session> runningSessions = sessionRepository.findByStatus(Status.IN_EXECUTION);
-
-        for (Session session : runningSessions) {
-            LocalDateTime startTime = session.getStartTime();
-            LocalDateTime expectedEndTime = startTime.plusMinutes(session.getDuration());
-
-            if (LocalDateTime.now().isAfter(expectedEndTime)) {
-                session.setStatus(Status.FINALIZED);
-                session.getStatusChangedTime().add(LocalDateTime.now());
-                sessionRepository.save(session);
-            }
-        }
     }
 
     public BugDTO reportBug(Long sessionId, BugDTO bugDto, Locale locale) {
