@@ -9,7 +9,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
+import java.util.Locale;
 
 @RestController
 @RequestMapping("/api/users")
@@ -23,38 +23,38 @@ public class UserController {
     }
 
     @GetMapping("")
-    public ResponseEntity<List<User>> getAll() {
+    public ResponseEntity<List<User>> getAll(Locale locale) {
         List<User> users = userService.findAll();
         return ResponseEntity.ok(users);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> getById(@PathVariable Long id) {
-        User user = userService.findById(id);
+    public ResponseEntity<User> getById(@PathVariable Long id, Locale locale) {
+        User user = userService.findById(id, locale);
         return ResponseEntity.ok(user);
     }
 
     @PostMapping("/admins")
-    public ResponseEntity<User> createAdmin(@RequestBody User user) {
-        User response = userService.create(user, Role.ADMIN);
+    public ResponseEntity<User> createAdmin(@RequestBody User user, Locale locale) {
+        User response = userService.create(user, Role.ADMIN, locale);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PostMapping("/testers")
-    public ResponseEntity<User> createTester(@RequestBody User user) {
-        User response = userService.create(user, Role.TESTER);
+    public ResponseEntity<User> createTester(@RequestBody User user, Locale locale) {
+        User response = userService.create(user, Role.TESTER, locale);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<User> update(@PathVariable Long id, @RequestBody User userDetails) {
-        User response = userService.update(id, userDetails);
+    public ResponseEntity<User> update(@PathVariable Long id, @RequestBody User userDetails, Locale locale) {
+        User response = userService.update(id, userDetails, locale);
         return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        userService.delete(id);
+    public ResponseEntity<Void> delete(@PathVariable Long id, Locale locale) {
+        userService.delete(id, locale);
         return ResponseEntity.noContent().build();
     }
 }

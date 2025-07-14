@@ -10,17 +10,17 @@ import br.ufscar.dc.dsw.GameTesting.exceptions.AppException;
 import br.ufscar.dc.dsw.GameTesting.model.*;
 import br.ufscar.dc.dsw.GameTesting.repository.*;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.nio.file.AccessDeniedException;
 import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,17 +32,20 @@ public class SessionService {
     private final UserRepository userRepository;
     private final StrategyRepository strategyRepository;
     private final BugRepository bugRepository;
+    private final MessageSource messageSource;
 
     public SessionService(SessionRepository sessionRepository,
                           UserRepository userRepository,
                           ProjetoRepository projetoRepository,
                           StrategyRepository strategyRepository,
-                          BugRepository bugRepository) {
+                          BugRepository bugRepository,
+                          MessageSource messageSource) {
         this.sessionRepository = sessionRepository;
         this.userRepository = userRepository;
         this.projetoRepository = projetoRepository;
         this.strategyRepository = strategyRepository;
         this.bugRepository = bugRepository;
+        this.messageSource = messageSource;
     }
 
     public List<SessionResponseDTO> listAll() {
@@ -59,11 +62,10 @@ public class SessionService {
 
         if (isAdmin) {
             return listAll();
-        }
-        else {
+        } else {
             String email = authentication.getName();
             User tester = userRepository.findByEmail(email)
-                    .orElseThrow(() -> new EntityNotFoundException("User not found"));
+                    .orElseThrow(() -> new EntityNotFoundException(messageSource.getMessage("user.notfound", null, Locale.getDefault())));
             List<Session> sessions = sessionRepository.findByTester(tester);
 
             return sessions.stream()
@@ -72,11 +74,10 @@ public class SessionService {
         }
     }
 
-
     @Transactional(readOnly = true)
-    public List<SessionResponseDTO> findSessionsByProjectId(Long projectId) {
+    public List<SessionResponseDTO> findSessionsByProjectId(Long projectId, Locale locale) {
         projetoRepository.findById(projectId)
-                .orElseThrow(() -> new EntityNotFoundException("Projeto não encontrado."));
+                .orElseThrow(() -> new EntityNotFoundException(messageSource.getMessage("projeto.notfound", null, locale)));
 
         List<Session> sessions = sessionRepository.findByProjetoId(projectId);
 
@@ -85,13 +86,13 @@ public class SessionService {
                 .collect(Collectors.toList());
     }
 
-    public Session createSession(SessionCreateDTO sessionCreateDTO) {
+    public Session createSession(SessionCreateDTO sessionCreateDTO, Locale locale) {
         User tester = userRepository.findByEmail(sessionCreateDTO.getTesterEmail())
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+                .orElseThrow(() -> new EntityNotFoundException(messageSource.getMessage("user.notfound", null, locale)));
         Projeto projeto = projetoRepository.findById(sessionCreateDTO.getProjectId())
-                .orElseThrow(() -> new EntityNotFoundException("Project not found"));
+                .orElseThrow(() -> new EntityNotFoundException(messageSource.getMessage("projeto.notfound", null, locale)));
         Strategy strategy = strategyRepository.findById(sessionCreateDTO.getStrategyId())
-                .orElseThrow(() -> new EntityNotFoundException("Strategy not found"));
+                .orElseThrow(() -> new EntityNotFoundException(messageSource.getMessage("strategy.notfound", null, locale)));
 
         Session session = new Session();
         session.setTester(tester);
@@ -105,12 +106,12 @@ public class SessionService {
         return sessionRepository.save(session);
     }
 
-    public Session startSession(Long sessionId) {
+    public Session startSession(Long sessionId, Locale locale) {
         Session session = sessionRepository.findById(sessionId)
-                .orElseThrow(() -> new IllegalStateException("A sessão não existe"));
+                .orElseThrow(() -> new IllegalStateException(messageSource.getMessage("session.notexists", null, locale)));
 
         if (session.getStatus() != Status.CREATED) {
-            throw new IllegalStateException("A sessão não pode ser inicializada");
+            throw new IllegalStateException(messageSource.getMessage("session.cannot_start", null, locale));
         }
         session.setStatus(Status.IN_EXECUTION);
         session.setStartTime(LocalDateTime.now());
@@ -119,12 +120,12 @@ public class SessionService {
         return sessionRepository.save(session);
     }
 
-    public Session finalizeSession(Long sessionId) {
+    public Session finalizeSession(Long sessionId, Locale locale) {
         Session session = sessionRepository.findById(sessionId)
-                .orElseThrow(() -> new IllegalStateException("A sessão não existe"));
+                .orElseThrow(() -> new IllegalStateException(messageSource.getMessage("session.notexists", null, locale)));
 
         if (session.getStatus() != Status.IN_EXECUTION) {
-            throw new IllegalStateException("A sessão não pode ser finalizada!");
+            throw new IllegalStateException(messageSource.getMessage("session.cannot_finalize", null, locale));
         }
         session.setStatus(Status.FINALIZED);
         session.getStatusChangedTime().add(LocalDateTime.now());
@@ -132,30 +133,27 @@ public class SessionService {
         return sessionRepository.save(session);
     }
 
-
-    public SessionResponseDTO findSessionById(Long sessionId)  {
+    public SessionResponseDTO findSessionById(Long sessionId, Locale locale) {
         Session session = sessionRepository.findById(sessionId)
-                .orElseThrow(() -> new EntityNotFoundException("Sessão não encontrada."));
+                .orElseThrow(() -> new EntityNotFoundException(messageSource.getMessage("session.notfound", null, locale)));
 
         return SessionResponseDTO.fromEntity(session);
-
     }
 
-
-    public SessionResponseDTO updateSession(Long sessionId, SessionUpdateDTO sessionUpdateDTO, Principal principal) {
+    public SessionResponseDTO updateSession(Long sessionId, SessionUpdateDTO sessionUpdateDTO, Principal principal, Locale locale) {
         Session session = sessionRepository.findById(sessionId)
-                .orElseThrow(()-> new EntityNotFoundException("sessão não encontrada"));
+                .orElseThrow(() -> new EntityNotFoundException(messageSource.getMessage("session.notfound", null, locale)));
 
         if (session.getStatus() == Status.FINALIZED) {
             if (principal == null) {
-                throw new AppException("Usuário precisa estar autenticado", HttpStatus.FORBIDDEN);
+                throw new AppException(messageSource.getMessage("user.must_authenticate", null, locale), HttpStatus.FORBIDDEN);
             }
 
             User currentUser = userRepository.findByEmail(principal.getName())
-                    .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado."));
+                    .orElseThrow(() -> new EntityNotFoundException(messageSource.getMessage("user.notfound", null, locale)));
 
             if (!currentUser.getRole().equals(Role.ADMIN)) {
-                throw new AppException("Usuário precisa ser ADMIN para editar session FINALIZED", HttpStatus.FORBIDDEN);
+                throw new AppException(messageSource.getMessage("user.must_be_admin", null, locale), HttpStatus.FORBIDDEN);
             }
         }
 
@@ -169,13 +167,13 @@ public class SessionService {
 
         if (sessionUpdateDTO.getStrategyId() != null) {
             Strategy newStrategy = strategyRepository.findById(sessionUpdateDTO.getStrategyId())
-                    .orElseThrow(() -> new EntityNotFoundException("estratégia não encontrada"));
+                    .orElseThrow(() -> new EntityNotFoundException(messageSource.getMessage("strategy.notfound", null, locale)));
 
             session.setStrategy(newStrategy);
         }
-        Session sessaoNova = sessionRepository.save(session);
+        Session updatedSession = sessionRepository.save(session);
 
-        return SessionResponseDTO.fromEntity(sessaoNova);
+        return SessionResponseDTO.fromEntity(updatedSession);
     }
 
     @Scheduled(fixedRate = 50000000)
@@ -184,7 +182,6 @@ public class SessionService {
         List<Session> runningSessions = sessionRepository.findByStatus(Status.IN_EXECUTION);
 
         for (Session session : runningSessions) {
-
             LocalDateTime startTime = session.getStartTime();
             LocalDateTime expectedEndTime = startTime.plusMinutes(session.getDuration());
 
@@ -196,13 +193,13 @@ public class SessionService {
         }
     }
 
-    public BugDTO reportBug(Long sessionId, BugDTO bugDto) {
+    public BugDTO reportBug(Long sessionId, BugDTO bugDto, Locale locale) {
         Session session = sessionRepository.findById(sessionId)
-                .orElseThrow(()->new EntityNotFoundException("Sessão de id " +  sessionId + " não encontrado"));
-
+                .orElseThrow(() -> new EntityNotFoundException(
+                        messageSource.getMessage("session.notfound_with_id", new Object[]{sessionId}, locale)));
 
         if (session.getStatus() != Status.IN_EXECUTION) {
-            throw new IllegalStateException("sessão não está em execução");
+            throw new IllegalStateException(messageSource.getMessage("session.not_in_execution", null, locale));
         }
 
         Bug bug = new Bug();
@@ -215,9 +212,9 @@ public class SessionService {
     }
 
     @Transactional(readOnly = true)
-    public List<BugDTO> findBugsBySession(Long sessionID) {
+    public List<BugDTO> findBugsBySession(Long sessionID, Locale locale) {
         if (!sessionRepository.existsById(sessionID)) {
-            throw new EntityNotFoundException("Sessão de id " + sessionID + " não encontrada.");
+            throw new EntityNotFoundException(messageSource.getMessage("session.notfound_with_id", new Object[]{sessionID}, locale));
         }
 
         List<Bug> bugs = bugRepository.findBySessionId(sessionID);

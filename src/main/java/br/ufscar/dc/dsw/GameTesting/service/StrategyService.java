@@ -1,4 +1,5 @@
 package br.ufscar.dc.dsw.GameTesting.service;
+
 import br.ufscar.dc.dsw.GameTesting.dtos.CreateStrategyDTO;
 import br.ufscar.dc.dsw.GameTesting.dtos.ImageDTO;
 import br.ufscar.dc.dsw.GameTesting.dtos.StrategyResponseDTO;
@@ -8,11 +9,14 @@ import br.ufscar.dc.dsw.GameTesting.model.Strategy;
 import br.ufscar.dc.dsw.GameTesting.model.Example;
 import br.ufscar.dc.dsw.GameTesting.model.Image;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -21,19 +25,21 @@ import java.util.stream.Collectors;
 public class StrategyService {
 
     private final StrategyRepository strategyRepository;
+    private final MessageSource messageSource;
 
     @Autowired
-    public StrategyService(StrategyRepository strategyRepository) {
+    public StrategyService(StrategyRepository strategyRepository, MessageSource messageSource) {
         this.strategyRepository = strategyRepository;
+        this.messageSource = messageSource;
     }
 
-    public Strategy save(CreateStrategyDTO dto) {
+    public Strategy save(CreateStrategyDTO dto, Locale locale) {
         if (dto.getName() == null || dto.getName().isBlank()) {
-            throw new AppException("O nome da estratégia é obrigatório.", HttpStatus.BAD_REQUEST);
+            throw new AppException(messageSource.getMessage("strategy.name.required", null, locale), HttpStatus.BAD_REQUEST);
         }
 
         if (dto.getDescription() == null || dto.getDescription().isBlank()) {
-            throw new AppException("A descrição da estratégia é obrigatório.", HttpStatus.BAD_REQUEST);
+            throw new AppException(messageSource.getMessage("strategy.description.required", null, locale), HttpStatus.BAD_REQUEST);
         }
 
         Strategy strategy = new Strategy();
@@ -77,16 +83,20 @@ public class StrategyService {
     }
 
     @Transactional(readOnly = true)
-    public StrategyResponseDTO findById(Long id) {
+    public StrategyResponseDTO findById(Long id, Locale locale) {
         Strategy strategy = strategyRepository.findById(id)
-                .orElseThrow(() -> new AppException("Estratégia com ID " + id + " não encontrada.", HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new AppException(
+                        messageSource.getMessage("strategy.notfound.id", new Object[]{id}, locale), 
+                        HttpStatus.NOT_FOUND));
         return StrategyResponseDTO.fromEntity(strategy);
     }
 
     @Transactional
-    public StrategyResponseDTO update(Long id, CreateStrategyDTO dto) {
+    public StrategyResponseDTO update(Long id, CreateStrategyDTO dto, Locale locale) {
         Strategy existing = strategyRepository.findById(id)
-                .orElseThrow(() -> new AppException("Estratégia com ID " + id + " não encontrada para atualização.", HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new AppException(
+                        messageSource.getMessage("strategy.notfound.id_update", new Object[]{id}, locale), 
+                        HttpStatus.NOT_FOUND));
 
         existing.setName(dto.getName());
         existing.setDescription(dto.getDescription());
@@ -119,23 +129,24 @@ public class StrategyService {
 
 
     @Transactional(readOnly = true)
-    public Optional<Strategy> findByName(String name) {
+    public Optional<Strategy> findByName(String name, Locale locale) {
         if (name == null || name.isBlank()) {
-            throw new AppException("Nome da estratégia não pode ser vazio para busca.", HttpStatus.BAD_REQUEST);
+            throw new AppException(messageSource.getMessage("strategy.name.required_search", null, locale), HttpStatus.BAD_REQUEST);
         }
         return strategyRepository.findByName(name);
     }
 
-    public void delete(Long id) {
+    public void delete(Long id, Locale locale) {
         Strategy strategy = strategyRepository.findById(id)
-                .orElseThrow(() -> new AppException("Estratégia com ID " + id + " não encontrada.", HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new AppException(
+                        messageSource.getMessage("strategy.notfound.id_delete", new Object[]{id}, locale), 
+                        HttpStatus.NOT_FOUND));
 
         if (strategy.getSession() != null && !strategy.getSession().isEmpty()) {
-            throw new AppException("Não é possível deletar estratégia. Está associado a alguma sessão.", HttpStatus.BAD_REQUEST);
+            throw new AppException(messageSource.getMessage("strategy.delete.associated_sessions", null, locale), HttpStatus.BAD_REQUEST);
         }
 
         strategyRepository.deleteById(id);
     }
-
 
 }
