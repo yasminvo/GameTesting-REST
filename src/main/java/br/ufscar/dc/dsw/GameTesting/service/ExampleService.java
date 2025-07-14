@@ -10,9 +10,12 @@ import br.ufscar.dc.dsw.GameTesting.model.Strategy;
 import br.ufscar.dc.dsw.GameTesting.model.Example;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 @Service
@@ -21,22 +24,27 @@ public class ExampleService {
 
     private final ExampleRepository exampleRepository;
     private final ImageRepository imageRepository; 
-    private final StrategyRepository strategyRepository; 
+    private final StrategyRepository strategyRepository;
+    private final MessageSource messageSource;
 
     @Autowired
     public ExampleService(ExampleRepository exampleRepository, 
                           ImageRepository imageRepository,
-                          StrategyRepository strategyRepository) {
+                          StrategyRepository strategyRepository,
+                          MessageSource messageSource) {
         this.exampleRepository = exampleRepository;
         this.imageRepository = imageRepository;
         this.strategyRepository = strategyRepository;
+        this.messageSource = messageSource;
     }
 
 
     @Transactional
-    public ExampleDTO save(ExampleDTO dto, Long strategyId) {
+    public ExampleDTO save(ExampleDTO dto, Long strategyId, Locale locale) {
         Strategy strategy = strategyRepository.findById(strategyId)
-                .orElseThrow(() -> new EntityNotFoundException("Strategy com ID " + strategyId + " não encontrada."));
+                .orElseThrow(() -> new EntityNotFoundException(
+                    messageSource.getMessage("strategy.notfound", new Object[]{strategyId}, locale)
+                ));
 
         Example example = new Example();
         example.setText(dto.getText());
@@ -67,9 +75,11 @@ public class ExampleService {
 
 
     @Transactional(readOnly = true)
-    public List<ExampleDTO> findByStrategyId(Long strategyId) {
+    public List<ExampleDTO> findByStrategyId(Long strategyId, Locale locale) {
         if (!strategyRepository.existsById(strategyId)) {
-            throw new EntityNotFoundException("Strategy com ID " + strategyId + " não encontrada.");
+            throw new EntityNotFoundException(
+                messageSource.getMessage("strategy.notfound", new Object[]{strategyId}, locale)
+            );
         }
 
         List<Example> examples = exampleRepository.findByStrategyId(strategyId);
@@ -83,14 +93,14 @@ public class ExampleService {
                 .toList();
     }
 
-    public void delete(Long id) {
+    public void delete(Long id, Locale locale) {
         if (exampleRepository.existsById(id)) {
             exampleRepository.deleteById(id);
         } else {
-            throw new RuntimeException("Example com ID " + id + " não encontrado para exclusão.");
+            throw new RuntimeException(
+                messageSource.getMessage("example.notfound.delete", new Object[]{id}, locale)
+            );
         }
     }
-
-
 
 }

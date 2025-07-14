@@ -6,11 +6,12 @@ import br.ufscar.dc.dsw.GameTesting.enums.Role;
 import br.ufscar.dc.dsw.GameTesting.exceptions.AppException;
 import br.ufscar.dc.dsw.GameTesting.model.User;
 import br.ufscar.dc.dsw.GameTesting.repository.UserRepository;
-import br.ufscar.dc.dsw.GameTesting.utils.JwtUtil;
 import br.ufscar.dc.dsw.GameTesting.service.CustomUserDetailsService;
+import br.ufscar.dc.dsw.GameTesting.utils.JwtUtil;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,6 +19,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Locale;
 import java.util.Optional;
 
 @Slf4j
@@ -37,18 +39,22 @@ public class AuthController {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private MessageSource messageSource;
+
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequestDTO request) {
+    public ResponseEntity<?> login(@RequestBody LoginRequestDTO request, Locale locale) {
         try {
             authManager.authenticate(
                     new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
             );
             final var userDetails = userDetailsService.loadUserByUsername(request.getEmail());
-            System.out.println(userDetails);
+
             Optional<User> optionalUser = userRepository.findByEmail(request.getEmail());
 
             if (optionalUser.isEmpty()) {
-                throw new AppException("Usuário não encontrado.", HttpStatus.UNAUTHORIZED);
+                String msg = messageSource.getMessage("auth.user.notfound", null, locale);
+                throw new AppException(msg, HttpStatus.UNAUTHORIZED);
             }
 
             User user = optionalUser.get();
@@ -58,7 +64,8 @@ public class AuthController {
 
             return ResponseEntity.ok(new JwtResponseDTO(token));
         } catch (AuthenticationException e) {
-            throw new AppException("Usuário ou senha inválidos.", HttpStatus.FORBIDDEN);
+            String msg = messageSource.getMessage("auth.user.invalid_credentials", null, locale);
+            throw new AppException(msg, HttpStatus.FORBIDDEN);
         }
     }
 }
